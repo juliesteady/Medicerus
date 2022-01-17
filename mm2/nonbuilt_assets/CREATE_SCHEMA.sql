@@ -44,7 +44,9 @@ CREATE TABLE medication (
     patient         TEXT REFERENCES person(publicid),   -- Which patient this is for
                             -- (In cases where multiple people in the household are using the app)
     prescriber      TEXT REFERENCES person(publicid),   -- Which person prescribed this medication
-    last_admin      TEXT DEFAULT CURRENT_TIMESTAMP  -- When this was last administered
+    last_admin      TEXT DEFAULT CURRENT_TIMESTAMP,  -- When this was last administered
+    prn_elg_rule    TEXT    -- The SQL query containing the eligibility rules: when is a PRN medication
+                            --    safe to take, based on label directions and last administration?
 );
 
 -- Medication schedule header table: stores the schedule headers of medications.
@@ -125,18 +127,6 @@ CREATE TABLE event (
     description     TEXT,
     timestamp       TEXT DEFAULT CURRENT_TIMESTAMP
 );
-
--- PRN Med Rules table:
--- TODO / FOR FUTURE USE
--- This table describes medication rules for PRN medications, for example
--- "tylenol maximum 1 gram every 6 hours".  At any given time we should
--- be able to run the query stored in rule_formula to determine if it is
--- safe to administer this medication.
-
-CREATE TABLE prn_med_rules(
-    med_id          TEXT REFERENCES medication(publicid),
-    rule_formula    TEXT
-)
 
 -- Config table:
 
