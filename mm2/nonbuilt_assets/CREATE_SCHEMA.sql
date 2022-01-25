@@ -120,6 +120,7 @@ n_co_pers (
 CREATE TABLE event (
     med_id          TEXT REFERENCES medication(publicid),
     quantity        REAL,
+	quantity_units	TEXT,
     person_target   TEXT REFERENCES person(publicid), -- The person this event occurred to
     person_actor    TEXT REFERENCES person(publicid), -- The person who did the event
     description     TEXT,
