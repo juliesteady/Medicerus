@@ -1,3 +1,0 @@
-# Medicerus Mobile
-
-
