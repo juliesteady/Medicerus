@@ -1,9 +1,28 @@
+/************************************************************
+    Medicerus Mobile: Medical Charting App
+    Copyright (C) <2022> Joshua Kramer, et. al.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+*************************************************************/
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'data/moor_database.dart';
+import 'data/drift_database.dart';
 import 'ui/rc_page.dart';
 import 'ui/mv_page.dart';
 import 'package:path/path.dart';
@@ -15,9 +34,7 @@ import 'package:flutter/services.dart';
 // Date Fields: https://medium.com/flutter-community/datefield-in-flutter-made-easy-3b2424b98cd7
 // This code sourced from https://github.com/ResoCoder/flutter-moor-tutorial
 
-void main () async
-{
-
+void main() async {
   // TODO: Re-architect this "check to see if NDC database file is present"
   //       routine so that a splash page can properly be displayed during
   //       this process if it will be slow.
@@ -43,11 +60,10 @@ void main () async
     // Copy from asset
     ByteData data = await rootBundle.load(join("assets", "ndc.db"));
     List<int> bytes =
-    data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
     // Write and flush the bytes written
     await File(path).writeAsBytes(bytes, flush: true);
-
   } else {
     print("Opening existing database");
   }
@@ -58,16 +74,13 @@ void main () async
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-
     final db = AppDatabase();
     final ndc_db = NdcDatabase('ndc.db');
     return MultiProvider(
       providers: [
-        Provider(builder: (_) => db.taskDao),
-        Provider(builder: (_) => db.tagDao),
+        Provider(builder: (_) => db.chartEventDao),
         Provider(builder: (_) => ndc_db.ndcDao)
       ],
       child: MaterialApp(
@@ -99,15 +112,13 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with
-    SingleTickerProviderStateMixin
-{
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _counter = 0;
 
   @override
-  void initState()
-  {
+  void initState() {
     _tabController = new TabController(length: 3, vsync: this);
     super.initState();
   }
@@ -136,7 +147,7 @@ class _HomePageState extends State<HomePage> with
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-        bottom: TabBar (
+        bottom: TabBar(
           unselectedLabelColor: Colors.white,
           labelColor: Colors.amber,
           tabs: [
