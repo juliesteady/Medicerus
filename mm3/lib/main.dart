@@ -80,8 +80,8 @@ class MyApp extends StatelessWidget {
     final ndc_db = NdcDatabase('ndc.db');
     return MultiProvider(
       providers: [
-        Provider(builder: (_) => db.chartEventDao),
-        Provider(builder: (_) => ndc_db.ndcDao)
+        Provider(create: (_) => db.chartEventsDao),
+        Provider(create: (_) => ndc_db.ndcDao)
       ],
       child: MaterialApp(
         title: 'Medicerus HomeChart',
@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -114,7 +114,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  // TODO: This was an error- was it correct to put 'late' here?
+  late TabController _tabController;
   int _counter = 0;
 
   @override

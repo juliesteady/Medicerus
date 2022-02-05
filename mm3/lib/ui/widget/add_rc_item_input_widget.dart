@@ -18,14 +18,14 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:drift/drift.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/drift_database.dart';
 
 class AddRapidchartItemInput extends StatefulWidget {
   const AddRapidchartItemInput({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -33,9 +33,8 @@ class AddRapidchartItemInput extends StatefulWidget {
 }
 
 class _AddRapidchartItemInputState extends State<AddRapidchartItemInput> {
-  DateTime newTaskDate;
-  Tag selectedTag;
-  TextEditingController controller;
+  DateTime newTaskDate = new DateTime.now();
+  late TextEditingController controller;
 
   @override
   void initState() {
@@ -51,8 +50,9 @@ class _AddRapidchartItemInputState extends State<AddRapidchartItemInput> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           _buildTextField(context),
-          _buildTagSelector(context),
-          _buildDateButton(context),
+
+          ///_buildTagSelector(context),
+          //_buildDateButton(context),
         ],
       ),
     );
@@ -65,20 +65,20 @@ class _AddRapidchartItemInputState extends State<AddRapidchartItemInput> {
         controller: controller,
         decoration: InputDecoration(hintText: 'Task Name'),
         onSubmitted: (inputName) {
-          final dao = Provider.of<TaskDao>(context);
+          /*final dao = Provider.of<RapidChartDao>(context);
           final task = TasksCompanion(
             name: Value(inputName),
             dueDate: Value(newTaskDate),
             tagName: Value(selectedTag?.name),
           );
-          dao.insertTask(task);
+          dao.insertTask(task);*/
           resetValuesAfterSubmit();
         },
       ),
     );
   }
 
-  StreamBuilder<List<Tag>> _buildTagSelector(BuildContext context) {
+  /*StreamBuilder<List<Tag>> _buildTagSelector(BuildContext context) {
     return StreamBuilder<List<Tag>>(
       stream: Provider.of<TagDao>(context).watchTags(),
       builder: (context, snapshot) {
@@ -128,10 +128,10 @@ class _AddRapidchartItemInputState extends State<AddRapidchartItemInput> {
           ),
         );
       },
-    );
-  }
+    ); */
+}
 
-  IconButton _buildDateButton(BuildContext context) {
+/*IconButton _buildDateButton(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.calendar_today),
       onPressed: () async {
@@ -143,13 +143,13 @@ class _AddRapidchartItemInputState extends State<AddRapidchartItemInput> {
         );
       },
     );
-  }
+  }*/
 
-  void resetValuesAfterSubmit() {
-    setState(() {
-      newTaskDate = null;
-      selectedTag = null;
+void resetValuesAfterSubmit() {
+  /*setState(() {
+      //newTaskDate = null;
+      //selectedTag = null;
       controller.clear();
     });
-  }
+  }*/
 }

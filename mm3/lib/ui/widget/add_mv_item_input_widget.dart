@@ -18,14 +18,14 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:drift/drift.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/drift_database.dart';
 
 class AddMedviewItemInput extends StatefulWidget {
   const AddMedviewItemInput({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -33,11 +33,12 @@ class AddMedviewItemInput extends StatefulWidget {
 }
 
 class _AddMedviewItemInputState extends State<AddMedviewItemInput> {
-  DateTime newTaskDate;
-  Tag selectedTag;
-  TextEditingController controller;
+  DateTime listEntryDate = DateTime.now();
+  // JPK TODO: is 'late' correct here?
+  late Medication selectedMed;
+  late TextEditingController controller;
 
-  var mvItems = List<String>();
+  //var mvItems = List.generate();
 
   @override
   void initState() {
@@ -234,10 +235,10 @@ class _AddMedviewItemInputState extends State<AddMedviewItemInput> {
   }
 
   void resetValuesAfterSubmit() {
-    setState(() {
-      newTaskDate = null;
-      selectedTag = null;
-      controller.clear();
-    });
+    //setState(() {
+    //  newTaskDate = null;
+    //  selectedTag = null;
+    //  controller.clear();
+    //});
   }
 }
