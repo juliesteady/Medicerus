@@ -23,21 +23,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'data/drift_database.dart';
+import 'package:logging/logging.dart';
 import 'ui/rc_page.dart';
 import 'ui/mv_page.dart';
 import 'package:path/path.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 
-// JPK Notes:
+// JPK Notes:  #LearnFlutter
 // How to do tabs: https://medium.com/@sanjay15k/creating-a-complete-tabbar-in-flutter-4f7465803e84
 // Date Fields: https://medium.com/flutter-community/datefield-in-flutter-made-easy-3b2424b98cd7
 // This code sourced from https://github.com/ResoCoder/flutter-moor-tutorial
 
+final log = Logger('MedicerusLogger');
+
 void main() async {
-  // TODO: Re-architect this "check to see if NDC database file is present"
-  //       routine so that a splash page can properly be displayed during
-  //       this process if it will be slow.
+  // TODO: Configuration parameters for logging?
+  Logger.root.level = Level.INFO;
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -45,17 +47,23 @@ void main() async {
   var databasesPath = await getDatabasesPath();
   var path = join(databasesPath, "ndc.db");
 
+  // TODO: Re-architect this "check to see if NDC database file is present"
+  //       routine so that a splash page can properly be displayed during
+  //       this process if it will be slow.
+
 // Check if the database exists
   var exists = await databaseExists(path);
 
   if (!exists) {
     // Should happen only the first time you launch your application
-    print("Creating new copy from asset");
+    log.info("NDC does not exist; creating new copy from asset");
 
     // Make sure the parent directory exists
     try {
       await Directory(dirname(path)).create(recursive: true);
-    } catch (_) {}
+    } catch (_) {
+      log.warning('Database parent directory does not exist!');
+    }
 
     // Copy from asset
     ByteData data = await rootBundle.load(join("assets", "ndc.db"));
@@ -65,23 +73,29 @@ void main() async {
     // Write and flush the bytes written
     await File(path).writeAsBytes(bytes, flush: true);
   } else {
-    print("Opening existing database");
+    log.info("Opening existing database");
   }
 // open the database
   //db = MyDatabase(path);
 
-  runApp(MyApp());
+  runApp(MedicerusApp());
 }
 
-class MyApp extends StatelessWidget {
+class MedicerusApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final db = AppDatabase();
     final ndc_db = NdcDatabase('ndc.db');
+
+    // #LearningFlutter: what is this MultiProvider thing?  Any time something
+    // is updated- in this case one of the data access objects- the provider
+    // will issue a message that other parts of the app (such as pages)
+    // will listen for and update themselves accordingly.
+
     return MultiProvider(
       providers: [
         Provider(create: (_) => db.chartEventsDao),
-        Provider(create: (_) => ndc_db.ndcDao)
+        Provider(create: (_) => db.medicationsDao)
       ],
       child: MaterialApp(
         title: 'Medicerus HomeChart',
@@ -120,7 +134,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    _tabController = new TabController(length: 3, vsync: this);
+    _tabController = new TabController(length: 2, vsync: this);
     super.initState();
   }
 
@@ -152,9 +166,7 @@ class _HomePageState extends State<HomePage>
           unselectedLabelColor: Colors.white,
           labelColor: Colors.amber,
           tabs: [
-            // Dashboard Tab
-            new Tab(icon: new Icon(Icons.dashboard)),
-            // "Fast Log" Tab
+            // "QuickList" Tab
             new Tab(icon: new Icon(Icons.fast_forward)),
             // "Medications" Tab
             new Tab(icon: new Icon(Icons.memory))
