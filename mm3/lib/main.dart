@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    _tabController = new TabController(length: 2, vsync: this);
+    _tabController = new TabController(length: 3, vsync: this);
     super.initState();
   }
 
@@ -166,6 +166,7 @@ class _HomePageState extends State<HomePage>
           unselectedLabelColor: Colors.white,
           labelColor: Colors.amber,
           tabs: [
+            new Tab(icon: new Icon(Icons.fast_rewind)),
             // "QuickList" Tab
             new Tab(icon: new Icon(Icons.fast_forward)),
             // "Medications" Tab
