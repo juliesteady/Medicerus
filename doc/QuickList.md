@@ -30,6 +30,8 @@ At this time we will support up to 1/4 increments of a full dose.  A "full dose"
 #### Rule 1: Caplets per 6 Hours ####
 
 The patient must not have had 2 caplets in the past 6 hours.
+**TEST 1:** The Medication record will be tweaked so that we show having taken 2 caplets both at the same time, 6 hours and 30 minutes ago. For output we expect to see two rows with timestamps in the past.
+**TEST 2:** The Medication record will be tweaked so that we show having taken 2 caplets; one caplet at 4 hours ago and another caplet at 6 hours 30 minutes ago.  For output we expect to see one row with timestamp in the past and one row with timestamp in the future.
 
 ```
 -- THIS QUERY IN DRAFT STATUS
@@ -42,3 +44,34 @@ where
   ev1.med_id = (Insert med_id here) and
   (ev1.timestamp < TIME());
 ```
+
+#### Rule 2: Caplets per 24 hours ####
+
+The patient must not have had a total of 6 caplets in the past 24 hours
+**TEST 1:** The Medication record will be tweaked so that we show having taken 1 caplet 15 minutes ago; 1 caplet 30 minutes ago; 2 caplets at 6 hours 30 minutes ago; and 2 caplets at 12 hours 30 minutes ago.  For output we expect to see four rows:
+- One row indicating an amount of 2 caplets and an expire time of 11 hours 30 minutes in the future;
+- One row indicating an amount of 2 caplets and an expire time of 17 hours and 30 minutes in the future;
+- One row indicating an amount of 1 caplet and an expire time of 23 hours and 30 minutes into the future;
+- One row indicating an amount of 1 caplet and an expire time of 23 hours and 45 minutes into the future.
+
+```
+-- THIS QUERY IN DRAFT STATUS
+select
+  timestamp,
+  quantity,
+  quantity_units
+from event ev1
+where
+  ev1.med_id = (Insert med_id here) and
+  (ev1.timestamp < TIME());
+```
+
+#### Rule 3: Medication course duration ####
+
+The patient must not have taken this medication straight for more than 10 days.
+
+
+#### Rule 4: Combine all previous rules ####
+
+Combine the previous rules so that a caplet that "expires" with Rule #2 can still be "not expired" with Rule #1.  Probably do a Common Table Expression to wrap the two rules and then the main query to combine the two.
+
