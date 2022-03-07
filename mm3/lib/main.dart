@@ -17,99 +17,47 @@
 
 *************************************************************/
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'data/drift_database.dart';
-import 'package:logging/logging.dart';
+import 'package:flutter/widgets.dart';
+
+import 'drug.dart';
+import 'dbHelper.dart';
 import 'ui/rc_page.dart';
 import 'ui/mv_page.dart';
-import 'package:path/path.dart';
-import 'dart:typed_data';
-import 'package:flutter/services.dart';
 
-// JPK Notes:  #LearnFlutter
-// How to do tabs: https://medium.com/@sanjay15k/creating-a-complete-tabbar-in-flutter-4f7465803e84
-// Date Fields: https://medium.com/flutter-community/datefield-in-flutter-made-easy-3b2424b98cd7
-// This code sourced from https://github.com/ResoCoder/flutter-moor-tutorial
-
-final log = Logger('MedicerusLogger');
-
-void main() async {
-  // TODO: Configuration parameters for logging?
-  Logger.root.level = Level.INFO;
-
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // https://github.com/simolus3/moor/issues/26:
-  var databasesPath = await getDatabasesPath();
-  var path = join(databasesPath, "ndc.db");
-
-  // TODO: Re-architect this "check to see if NDC database file is present"
-  //       routine so that a splash page can properly be displayed during
-  //       this process if it will be slow.
-
-// Check if the database exists
-  var exists = await databaseExists(path);
-
-  if (!exists) {
-    // Should happen only the first time you launch your application
-    log.info("NDC does not exist; creating new copy from asset");
-
-    // Make sure the parent directory exists
-    try {
-      await Directory(dirname(path)).create(recursive: true);
-    } catch (_) {
-      log.warning('Database parent directory does not exist!');
-    }
-
-    // Copy from asset
-    ByteData data = await rootBundle.load(join("assets", "ndc.db"));
-    List<int> bytes =
-        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-
-    // Write and flush the bytes written
-    await File(path).writeAsBytes(bytes, flush: true);
-  } else {
-    log.info("Opening existing database");
-  }
-// open the database
-  //db = MyDatabase(path);
-
-  runApp(MedicerusApp());
+void main() {
+  runApp(const MyApp());
 }
 
-class MedicerusApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final db = AppDatabase();
-    final ndc_db = NdcDatabase('ndc.db');
-
-    // #LearningFlutter: what is this MultiProvider thing?  Any time something
-    // is updated- in this case one of the data access objects- the provider
-    // will issue a message that other parts of the app (such as pages)
-    // will listen for and update themselves accordingly.
-
-    return MultiProvider(
-      providers: [
-        Provider(create: (_) => db.chartEventsDao),
-        Provider(create: (_) => db.medicationsDao)
-      ],
-      child: MaterialApp(
-        title: 'Medicerus HomeChart',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: HomePage(title: 'Medicerus HomeChart'),
+    return MaterialApp(
+      title: 'Medicerus',
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted.
+        primarySwatch: Colors.blue,
       ),
+      home: const MyHomePage(title: 'Medicerus'),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -123,18 +71,17 @@ class HomePage extends StatefulWidget {
   final String title;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  // TODO: This was an error- was it correct to put 'late' here?
-  late TabController _tabController;
   int _counter = 0;
+  late TabController _tabController;
 
   @override
   void initState() {
-    _tabController = new TabController(length: 3, vsync: this);
+    _tabController = new TabController(length: 2, vsync: this);
     super.initState();
   }
 
@@ -162,33 +109,67 @@ class _HomePageState extends State<HomePage>
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-        bottom: TabBar(
-          unselectedLabelColor: Colors.white,
-          labelColor: Colors.amber,
-          tabs: [
-            new Tab(icon: new Icon(Icons.fast_rewind)),
-            // "QuickList" Tab
-            new Tab(icon: new Icon(Icons.fast_forward)),
-            // "Medications" Tab
-            new Tab(icon: new Icon(Icons.memory))
-          ],
-          controller: _tabController,
-        ),
       ),
-      
+      bottomNavigationBar: bottomTabs(),
       body: TabBarView(
         children: [
-          new Text("This is Dashboard View"),
+          //new Text("This is Dashboard View"),
           RapidchartPage(),
           MedviewPage(),
         ],
         controller: _tabController,
       ),
-      //floatingActionButton: FloatingActionButton(
-      //  onPressed: _incrementCounter,
-      //  tooltip: 'Increment',
-      //  child: Icon(Icons.add),
-      // This trailing comma makes auto-formatting nicer for build methods.
+      // body: Center(
+      //   // Center is a layout widget. It takes a single child and positions it
+      //   // in the middle of the parent.
+      //   child: Column(
+      //     // Column is also a layout widget. It takes a list of children and
+      //     // arranges them vertically. By default, it sizes itself to fit its
+      //     // children horizontally, and tries to be as tall as its parent.
+      //     //
+      //     // Invoke "debug painting" (press "p" in the console, choose the
+      //     // "Toggle Debug Paint" action from the Flutter Inspector in Android
+      //     // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+      //     // to see the wireframe for each widget.
+      //     //
+      //     // Column has various properties to control how it sizes itself and
+      //     // how it positions its children. Here we use mainAxisAlignment to
+      //     // center the children vertically; the main axis here is the vertical
+      //     // axis because Columns are vertical (the cross axis would be
+      //     // horizontal).
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: <Widget>[
+      //       const Text(
+      //         'You have pushed the button this many times:',
+      //       ),
+      //       Text(
+      //         '$_counter',
+      //         style: Theme.of(context).textTheme.headline4,
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Widget bottomTabs() {
+    return Container(
+        color: Colors.blue,
+        child: TabBar(
+          unselectedLabelColor: Colors.white,
+          labelColor: Colors.amber,
+          tabs: [
+            // "QuickList" Tab
+            Tab(icon: new Icon(Icons.fast_forward)),
+            // "Medications" Tab
+            Tab(icon: new Icon(Icons.medication))
+          ],
+          controller: _tabController,
+        ));
   }
 }

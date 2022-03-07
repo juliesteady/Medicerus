@@ -18,11 +18,19 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'dart:async';
 
-import '../data/drift_database.dart';
-import 'widget/add_mv_item_input_widget.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:flutter/widgets.dart';
+
+import '../drug.dart';
+import '../dbHelper.dart';
+// import 'package:provider/provider.dart';
+// import 'package:flutter_slidable/flutter_slidable.dart';
+
+// import '../data/drift_database.dart';
+// import 'widget/add_mv_item_input_widget.dart';
 
 class MedviewPage extends StatefulWidget {
   @override
@@ -30,6 +38,7 @@ class MedviewPage extends StatefulWidget {
 }
 
 class _MedviewPageState extends State<MedviewPage> {
+  final dbHelper = DatabaseHelper.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,25 +47,57 @@ class _MedviewPageState extends State<MedviewPage> {
         ),
         body: Column(
           children: <Widget>[
-            Expanded(child: _buildMVList(context)),
+            ElevatedButton(
+              child: Text(
+                'query',
+                style: TextStyle(fontSize: 20),
+              ),
+              onPressed: _queryDrugs,
+            ),
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          // #JPK #LearningDart: https://github.com/AbdulRahmanAlHamali/flutter_pagewise/issues/63#issuecomment-587512197
-          onPressed: () => _showAddItemSheet(context),
-          tooltip: 'Add Item',
-          child: Icon(Icons.add),
         ));
   }
 
-  _buildMVList(var context) {}
-
-  _showAddItemSheet(var context) {
-    showBottomSheet(
-        context: context,
-        builder: (context) => Container(
-              color: Colors.lightBlue[50],
-              child: AddMedviewItemInput(),
-            ));
+  void _queryDrugs() async {
+    //dbHelper.printQuery();
+    final drugs = await dbHelper.getDrugs();
+    for (int i = 0; i < drugs.length; i++) {
+      print(drugs[i].toString());
+    }
+    //rows.forEach(print);
   }
 }
+
+
+
+// class _MedviewPageState extends State<MedviewPage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         appBar: AppBar(
+//           title: Text('MedView'),
+//         ),
+//         body: Column(
+//           children: <Widget>[
+//             Expanded(child: _buildMVList(context)),
+//           ],
+//         ),
+//         floatingActionButton: FloatingActionButton(
+//           // #JPK #LearningDart: https://github.com/AbdulRahmanAlHamali/flutter_pagewise/issues/63#issuecomment-587512197
+//           onPressed: () => _showAddItemSheet(context),
+//           tooltip: 'Add Item',
+//           child: Icon(Icons.add),
+//         ));
+//   }
+
+//   _buildMVList(var context) {}
+
+//   _showAddItemSheet(var context) {
+//     showBottomSheet(
+//         context: context,
+//         builder: (context) => Container(
+//               color: Colors.lightBlue[50],
+//               child: AddMedviewItemInput(),
+//             ));
+//   }
+// }
