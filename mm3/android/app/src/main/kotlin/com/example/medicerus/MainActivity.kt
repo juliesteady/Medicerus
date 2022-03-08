@@ -1,4 +1,4 @@
-package com.example.medicerus
+package com.orma.medicerus
 
 import io.flutter.embedding.android.FlutterActivity
 
