@@ -1,4 +1,4 @@
-package com.example.medicerus_mobile_v3
+package com.orma.medicerus
 
 import io.flutter.embedding.android.FlutterActivity
 
