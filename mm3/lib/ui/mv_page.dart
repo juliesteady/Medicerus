@@ -39,6 +39,7 @@ class MedviewPage extends StatefulWidget {
 
 class _MedviewPageState extends State<MedviewPage> {
   final dbHelper = DatabaseHelper.instance;
+  ListView llv = ListView(shrinkWrap: true);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,8 +55,57 @@ class _MedviewPageState extends State<MedviewPage> {
               ),
               onPressed: _queryDrugs,
             ),
+            ListView(
+              shrinkWrap: true,
+              children: const <Widget>[
+                ListTile(
+                  leading: Icon(Icons.medication),
+                  title: Text('Someting'),
+                ),
+              ],
+            ),
+            medDisplayWidget(),
           ],
         ));
+  }
+
+  Widget medDisplayWidget() {
+    return FutureBuilder(
+      future: this.dbHelper.getDrugs(),
+      builder: (BuildContext context, AsyncSnapshot<List<Drug>> snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.data?.length,
+            itemBuilder: (context, position) {
+              //return Dismissible(
+              //  direction: DismissDirection.endToStart,
+              //  background: Container(
+              return Container(
+                //height: 3.0,
+                color: Colors.blueAccent,
+                alignment: Alignment.centerLeft,
+                //padding: EdgeInserts.symmetric(horizontal: 10.0),
+                //child: Icon(Icons.delete_forever),
+
+                child: Text(
+                  snapshot.data![position].nonproprietaryName.toString(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    //height: 2.0,
+                  ),
+                ),
+              );
+              //key: UniqueKey(),
+              //);
+            },
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 
   void _queryDrugs() async {
