@@ -48,25 +48,67 @@ class _MedviewPageState extends State<MedviewPage> {
         ),
         body: Column(
           children: <Widget>[
-            ElevatedButton(
-              child: Text(
-                'query',
-                style: TextStyle(fontSize: 20),
-              ),
-              onPressed: _queryDrugs,
-            ),
+            //ElevatedButton(
+            //  child: Text(
+            //    'query',
+            //    style: TextStyle(fontSize: 20),
+            //  ),
+            //  onPressed: _queryDrugs,
+            //),
             ListView(
               shrinkWrap: true,
               children: const <Widget>[
                 ListTile(
                   leading: Icon(Icons.medication),
-                  title: Text('Someting'),
+                  title: Text('Current Medications'),
                 ),
               ],
             ),
             medDisplayWidget(),
           ],
         ));
+  }
+
+  Widget medDisplayLine(String displayLine) {
+    return Builder(builder: (BuildContext context) {
+      return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+                constraints: BoxConstraints(maxWidth: 20),
+                padding: EdgeInsets.all(10),
+                child: Icon(Icons.medical_services)),
+            Container(
+                constraints: BoxConstraints(maxWidth: 1000),
+                padding: EdgeInsets.all(10),
+                child: Text(displayLine,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ))),
+          ]);
+    });
+  }
+
+  Widget medDisplayLine2(String displayLine) {
+    return Builder(builder: (BuildContext context) {
+      return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IntrinsicHeight(
+                child: new Flexible(
+                    //padding: const EdgeInsets.all(20.0),
+                    child: Icon(Icons.medical_services))),
+            IntrinsicHeight(
+                child: new Flexible(
+                    //padding: const EdgeInsets.all(20.0),
+                    child: Text(displayLine,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        )))),
+          ]);
+    });
   }
 
   Widget medDisplayWidget() {
@@ -85,17 +127,18 @@ class _MedviewPageState extends State<MedviewPage> {
                 //height: 3.0,
                 color: Colors.blueAccent,
                 alignment: Alignment.centerLeft,
+                child: medDisplayLine2(
+                    snapshot.data![position].nonproprietaryName.toString()),
                 //padding: EdgeInserts.symmetric(horizontal: 10.0),
                 //child: Icon(Icons.delete_forever),
 
-                child: Text(
-                  snapshot.data![position].nonproprietaryName.toString(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    //height: 2.0,
-                  ),
-                ),
+                //child: Text(
+                //  snapshot.data![position].nonproprietaryName.toString(),
+                //  style: TextStyle(
+                //    fontSize: 16,
+                //    color: Colors.white,
+                //),
+                //),
               );
               //key: UniqueKey(),
               //);
