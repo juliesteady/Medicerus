@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart';
+//import 'package:flutter_icons/flutter_icons.dart';
 
 import 'drug.dart';
 import 'dbHelper.dart';
@@ -165,7 +166,8 @@ class _MyHomePageState extends State<MyHomePage>
           labelColor: Colors.amber,
           tabs: [
             // "QuickList" Tab
-            Tab(icon: new Icon(Icons.fast_forward)),
+            //Tab(icon: new Icon(Entypo.aircraft-take-off)),
+            Tab(icon: new Icon(Icons.rocket_launch)),
             // "Medications" Tab
             Tab(icon: new Icon(Icons.medication))
           ],

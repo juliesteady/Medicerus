@@ -48,13 +48,13 @@ class _MedviewPageState extends State<MedviewPage> {
         ),
         body: Column(
           children: <Widget>[
-            //ElevatedButton(
-            //  child: Text(
-            //    'query',
-            //    style: TextStyle(fontSize: 20),
-            //  ),
-            //  onPressed: _queryDrugs,
-            //),
+            ElevatedButton(
+              child: Text(
+                'Get Recent',
+                style: TextStyle(fontSize: 20),
+              ),
+              onPressed: _queryRecentDrugs,
+            ),
             ListView(
               shrinkWrap: true,
               children: const <Widget>[
@@ -64,54 +64,57 @@ class _MedviewPageState extends State<MedviewPage> {
                 ),
               ],
             ),
-            medDisplayWidget(),
+            medDisplayWidgetCurrent(),
+            ListView(
+              shrinkWrap: true,
+              children: const <Widget>[
+                ListTile(
+                  leading: Icon(Icons.medication),
+                  title: Text('Recent Medications'),
+                ),
+              ],
+            ),
           ],
         ));
   }
 
   Widget medDisplayLine(String displayLine) {
     return Builder(builder: (BuildContext context) {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-                constraints: BoxConstraints(maxWidth: 20),
-                padding: EdgeInsets.all(10),
-                child: Icon(Icons.medical_services)),
-            Container(
-                constraints: BoxConstraints(maxWidth: 1000),
-                padding: EdgeInsets.all(10),
-                child: Text(displayLine,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ))),
-          ]);
+      return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Container(
+            constraints: BoxConstraints(maxWidth: 20),
+            padding: EdgeInsets.all(10),
+            child: Icon(Icons.medical_services)),
+        Container(
+            constraints: BoxConstraints(maxWidth: 1000),
+            padding: EdgeInsets.all(10),
+            child: Text(displayLine,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ))),
+      ]);
     });
   }
 
   Widget medDisplayLine2(String displayLine) {
     return Builder(builder: (BuildContext context) {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IntrinsicHeight(
-                child: new Flexible(
-                    //padding: const EdgeInsets.all(20.0),
-                    child: Icon(Icons.medical_services))),
-            IntrinsicHeight(
-                child: new Flexible(
-                    //padding: const EdgeInsets.all(20.0),
-                    child: Text(displayLine,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        )))),
-          ]);
+      return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        IntrinsicHeight(
+            child: new Flexible(child: Icon(Icons.medical_services))),
+        IntrinsicHeight(
+            child: new Flexible(
+                //padding: const EdgeInsets.all(20.0),
+                child: Text(displayLine,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    )))),
+      ]);
     });
   }
 
-  Widget medDisplayWidget() {
+  Widget medDisplayWidgetCurrent() {
     return FutureBuilder(
       future: this.dbHelper.getDrugs(),
       builder: (BuildContext context, AsyncSnapshot<List<Drug>> snapshot) {
@@ -151,12 +154,61 @@ class _MedviewPageState extends State<MedviewPage> {
     );
   }
 
+  Widget medDisplayWidgetRecent() {
+    return FutureBuilder(
+      future: this.dbHelper.getRecentDrugs(),
+      builder: (BuildContext context, AsyncSnapshot<List<Drug>> snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.data?.length,
+            itemBuilder: (context, position) {
+              //return Dismissible(
+              //  direction: DismissDirection.endToStart,
+              //  background: Container(
+              return Container(
+                //height: 3.0,
+                color: Colors.blueAccent,
+                alignment: Alignment.centerLeft,
+                child: medDisplayLine2(
+                    snapshot.data![position].nonproprietaryName.toString()),
+                //padding: EdgeInserts.symmetric(horizontal: 10.0),
+                //child: Icon(Icons.delete_forever),
+
+                //child: Text(
+                //  snapshot.data![position].nonproprietaryName.toString(),
+                //  style: TextStyle(
+                //    fontSize: 16,
+                //    color: Colors.white,
+                //),
+                //),
+              );
+              //key: UniqueKey(),
+              //);
+            },
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
   void _queryDrugs() async {
     //dbHelper.printQuery();
-    final drugs = await dbHelper.getDrugs();
-    for (int i = 0; i < drugs.length; i++) {
-      print(drugs[i].toString());
-    }
+    final drugs = await dbHelper.getRecentDrugs();
+    //for (int i = 0; i < drugs.length; i++) {
+    //  print(drugs[i].toString());
+    // }
+    //rows.forEach(print);
+  }
+
+  void _queryRecentDrugs() async {
+    //dbHelper.printQuery();
+    final drugs = await dbHelper.getRecentDrugs();
+    //for (int i = 0; i < drugs.length; i++) {
+    //  print(drugs[i].toString());
+    // }
     //rows.forEach(print);
   }
 }
