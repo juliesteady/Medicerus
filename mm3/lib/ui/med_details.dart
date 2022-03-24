@@ -18,35 +18,33 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:flutter/widgets.dart';
-
 import '../drug.dart';
-import '../dbHelper.dart';
-// import 'package:provider/provider.dart';
-// import 'package:flutter_slidable/flutter_slidable.dart';
 
-// import '../data/drift_database.dart';
-// import 'widget/add_mv_item_input_widget.dart';
-
-class MedviewPage extends StatefulWidget {
-  @override
-  _MedviewPageState createState() => _MedviewPageState();
-}
-
-class _MedviewPageState extends State<MedviewPage> {
+class MedDetailsPage extends StatelessWidget {
+  const MedDetailsPage({Key? key, required this.drug}) : super(key: key);
+  final Drug drug;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MedView'),
+        title: Text(drug.proprietaryName),
       ),
-      body: Column(
-        children: <Widget>[],
-      ),
+      body: Column(children: [
+        Container(
+            width: 250, child: Text("Substance Name: " + drug.substanceName)),
+        Container(
+            width: 250,
+            child: Text("NonProprietary Name: " + drug.nonproprietaryName)),
+        Container(width: 250, child: Text("NDC Number: " + drug.prodNDC)),
+      ]
+          //     child: ElevatedButton.icon(
+          //   icon: const Icon(Icons.arrow_back_ios_new),
+          //   label: Text('Back'),
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          // )
+          ),
     );
   }
 }

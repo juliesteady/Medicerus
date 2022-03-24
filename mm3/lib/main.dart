@@ -18,6 +18,7 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
+import 'package:medicerus/ui/dash_page.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart';
@@ -25,7 +26,7 @@ import 'package:flutter/widgets.dart';
 
 import 'drug.dart';
 import 'dbHelper.dart';
-import 'ui/rc_page.dart';
+import 'ui/ql_page.dart';
 import 'ui/mv_page.dart';
 
 void main() {
@@ -82,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void initState() {
-    _tabController = new TabController(length: 2, vsync: this);
+    _tabController = new TabController(length: 3, vsync: this);
     super.initState();
   }
 
@@ -115,8 +116,9 @@ class _MyHomePageState extends State<MyHomePage>
       body: TabBarView(
         children: [
           //new Text("This is Dashboard View"),
-          RapidchartPage(),
+          DashboardPage(),
           MedviewPage(),
+          QuicklistPage()
         ],
         controller: _tabController,
       ),
@@ -165,11 +167,12 @@ class _MyHomePageState extends State<MyHomePage>
           unselectedLabelColor: Colors.white,
           labelColor: Colors.amber,
           tabs: [
+            Tab(icon: new Icon(Icons.launch)),
+            Tab(icon: new Icon(Icons.medication)),
             // "QuickList" Tab
+            Tab(icon: new Icon(Icons.speed))
             //Tab(icon: new Icon(Entypo.aircraft-take-off)),
-            Tab(icon: new Icon(Icons.rocket_launch)),
             // "Medications" Tab
-            Tab(icon: new Icon(Icons.medication))
           ],
           controller: _tabController,
         ));

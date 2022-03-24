@@ -24,17 +24,17 @@ import 'package:flutter/material.dart';
 // import '../data/drift_database.dart';
 // import 'widget/add_rc_item_input_widget.dart';
 
-class RapidchartPage extends StatefulWidget {
+class DashboardPage extends StatefulWidget {
   @override
-  _RapidchartPageState createState() => _RapidchartPageState();
+  _DashboardPageState createState() => _DashboardPageState();
 }
 
-class _RapidchartPageState extends State<RapidchartPage> {
+class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('RapidChart'),
+        title: Text('Dashboard'),
       ),
       body: Column(
         children: <Widget>[],
@@ -42,34 +42,3 @@ class _RapidchartPageState extends State<RapidchartPage> {
     );
   }
 }
-// class _RapidchartPageState extends State<RapidchartPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         appBar: AppBar(
-//           title: Text('RapidChart'),
-//         ),
-//         body: Column(
-//           children: <Widget>[
-//             Expanded(child: _buildRCList(context)),
-//           ],
-//         ),
-//         floatingActionButton: FloatingActionButton(
-//           // #JPK #LearningDart: https://github.com/AbdulRahmanAlHamali/flutter_pagewise/issues/63#issuecomment-587512197
-//           onPressed: () => _showAddItemSheet(context),
-//           tooltip: 'Add Item',
-//           child: Icon(Icons.add),
-//         ));
-//   }
-
-//   _buildRCList(var context) {}
-
-//   _showAddItemSheet(var context) {
-//     showBottomSheet(
-//         context: context,
-//         builder: (context) => Container(
-//               color: Colors.lightBlue[50],
-//               child: AddRapidchartItemInput(),
-//             ));
-//   }
-// }
