@@ -119,11 +119,11 @@ class DatabaseHelper {
   Future<List<Drug>> searchDrugs(search) async {
     final db = await instance.database;
     List<Map<String, dynamic>> medlist = await db.rawQuery(
-        'SELECT * from drugs WHERE PROPRIETARYNAME like \"%' +
+        'SELECT * from drugs WHERE LOWER(PROPRIETARYNAME) like LOWER(\"%' +
             search +
-            '%\" OR NONPROPRIETARYNAME like \"%' +
+            '%\") OR LOWER(NONPROPRIETARYNAME) like LOWER(\"%' +
             search +
-            '%\" LIMIT 10 ');
+            '%\")');
     return List.generate(medlist.length, (i) {
       return Drug(
           id: medlist[i]['PRODUCTID'],

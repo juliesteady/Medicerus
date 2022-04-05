@@ -19,6 +19,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:medicerus/ui/med_details.dart';
+import 'package:medicerus/ui/med_form.dart';
+import 'package:medicerus/ui/otc_form.dart';
 import 'dart:async';
 
 import 'package:path/path.dart';
@@ -37,6 +39,8 @@ class _QuicklistPageState extends State<QuicklistPage> {
   Widget customSearchBar = const Text('Search Medications');
   Icon searchIcon = const Icon(Icons.search);
   String searchQuery = "";
+  int searchOffset = 0;
+  int searchLength = 0;
   final dbHelper = DatabaseHelper.instance;
   ListView llv = ListView(shrinkWrap: true);
   @override
@@ -47,34 +51,42 @@ class _QuicklistPageState extends State<QuicklistPage> {
             decoration: InputDecoration(
               hintText: 'Search medications',
               hintStyle: TextStyle(
-                color: Colors.white,
+                color: Colors.black54,
                 fontSize: 18,
                 fontStyle: FontStyle.italic,
               ),
-              border: InputBorder.none,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              fillColor: Colors.white,
+              filled: true,
+              isDense: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
             ),
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
             ),
             onChanged: (text) {
-              // setState(() {
               searchQuery = text;
-              // });
+            },
+            onSubmitted: (text) {
+              setState(() {
+                searchQuery = text;
+                searchOffset = 0;
+              });
             },
           ),
+          backgroundColor: Colors.indigo[900],
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: searchIcon,
               onPressed: () {
+                FocusManager.instance.primaryFocus?.unfocus();
                 setState(() {
                   searchQuery = searchQuery;
-                  // if (searchIcon == Icons.search) {
-                  //   searchIcon = const Icon(Icons.cancel);
-                  // } else {
-                  //   searchIcon = const Icon(Icons.search);
-                  //   customSearchBar = const Text('Search Medications');
-                  // }
+                  searchOffset = 0;
                 });
               },
             )
@@ -83,31 +95,48 @@ class _QuicklistPageState extends State<QuicklistPage> {
         ),
         body: Column(
           children: <Widget>[
-            ElevatedButton(
-              child: Text(
-                'Get Recent',
-                style: TextStyle(fontSize: 20),
-              ),
-              onPressed: _queryRecentDrugs,
-            ),
-            ListView(
-              shrinkWrap: true,
-              children: const <Widget>[
-                ListTile(
-                  leading: Icon(Icons.medication),
-                  title: Text('Current Medications'),
-                ),
-              ],
-            ),
             medDisplayWidgetCurrent(searchQuery),
-            ListView(
-              shrinkWrap: true,
-              children: const <Widget>[
-                ListTile(
-                  leading: Icon(Icons.medication),
-                  title: Text('Recent Medications'),
-                ),
-              ],
+            Container(
+              color: Colors.indigo[900],
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    ElevatedButton(
+                      child: Text(
+                        'Back',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      //onPressed: _queryRecentDrugs,
+                      onPressed: (searchOffset != 0)
+                          ? () {
+                              if (searchOffset - 10 >= 0) {
+                                setState(() {
+                                  searchOffset = searchOffset - 10;
+                                });
+                              } else {
+                                print("At beginning of query range");
+                              }
+                            }
+                          : null,
+                    ),
+                    ElevatedButton(
+                      child: Text(
+                        'Next',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      //onPressed: _queryRecentDrugs,
+                      onPressed: (searchOffset == searchLength ||
+                              (searchLength - searchOffset) < 10)
+                          // (searchOffset + 10) - searchLength < 10)
+                          ? null
+                          : () {
+                              setState(() {
+                                searchOffset = searchOffset + 10;
+                                print(searchOffset);
+                              });
+                            },
+                    ),
+                  ]),
             ),
           ],
         ));
@@ -132,39 +161,103 @@ class _QuicklistPageState extends State<QuicklistPage> {
   //   });
   // }
 
-  Widget medDisplayLine2(String propname, String nonpropname) {
+  Widget medDisplayLine2(
+      String proprietname, String nonproprietname, Drug drug) {
+    Icon medIcon = Icon(Icons.medical_services);
+    if (drug.dosageFormName.toLowerCase().contains('tablet')) {
+      medIcon = Icon(Icons.medication);
+    } else if (drug.dosageFormName.toLowerCase().contains('liquid') ||
+        drug.dosageFormName.toLowerCase().contains('solution') ||
+        drug.dosageFormName.toLowerCase().contains('syrup') ||
+        drug.dosageFormName.toLowerCase().contains('suspension')) {
+      medIcon = Icon(Icons.local_drink);
+    }
+    String medType = '';
+    if (drug.prodTypeName.toLowerCase() == 'human otc drug') {
+      medType = 'Over the Counter';
+    } else {
+      medType = 'Prescription Drug';
+    }
     return Builder(builder: (BuildContext context) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-              height: 30,
-              child: new Flexible(child: Icon(Icons.medical_services))),
-          Column(
+              constraints: BoxConstraints(maxWidth: 25),
+              // padding: EdgeInsets.all(10),
+              // child: Icon(Icons.medical_services)
+              child: medIcon),
+          Column(children: [
+            Container(
+                width: 325,
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                //child: new Flexible(
+                //padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  proprietname,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.left,
+                )), //),
+            Container(
+                width: 325,
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                //child: new Flexible(
+                child: Text(
+                  nonproprietname,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                  ),
+                  textAlign: TextAlign.left,
+                )), //),
+            Container(
+                width: 325,
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                //child: new Flexible(
+                child: Text(
+                  medType,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
+                  textAlign: TextAlign.left,
+                )),
+          ]),
+          Stack(
             children: [
-              Container(
-                  width: 250,
-                  //child: new Flexible(
-                  //padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                    propname,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
+              PopupMenuButton(
+                icon: const Icon(Icons.more_vert),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                  const PopupMenuItem(
+                    child: ListTile(
+                      //leading: Icon(Icons.add),
+                      title: Text("View Details"),
                     ),
-                    textAlign: TextAlign.left,
-                  )), //),
-              Container(
-                  width: 250,
-                  //child: new Flexible(
-                  child: Text(
-                    nonpropname,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[500],
-                    ),
-                    textAlign: TextAlign.left,
-                  )), //),
+                    value: 0,
+                  ),
+                  const PopupMenuItem(
+                      child: ListTile(
+                    //leading: Icon(Icons.add),
+                    title: Text("Pin to Dashboard"),
+                  )),
+                ],
+                //onSelected block found at https://stackoverflow.com/questions/59478364/how-to-use-ontap-or-onpressed-in-popupmenuitem, user no_fate
+                onSelected: (result) {
+                  if (result == 0) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MedDetailsPage(drug: drug)),
+                    );
+                  }
+                },
+                //padding: EdgeInsets.symmetric(vertical: 75, horizontal: 75),
+                //offset: const Offset(0, -270),
+              ),
+              //)
             ],
           ),
         ],
@@ -173,70 +266,84 @@ class _QuicklistPageState extends State<QuicklistPage> {
   }
 
   Widget medDisplayWidgetCurrent(String searchQuery) {
+    print('runquery');
     return FutureBuilder(
       future: this.dbHelper.searchDrugs(searchQuery),
       builder: (BuildContext context, AsyncSnapshot<List<Drug>> snapshot) {
         if (snapshot.hasData) {
-          return Container(
-              height:
-                  325, //sets height for total list field, prevents overflowing
-              child: ListView.builder(
-                scrollDirection:
-                    Axis.vertical, //allows list to be scrollable vertically
-                shrinkWrap: true,
-                itemCount: snapshot.data?.length,
-                itemBuilder: (context, position) {
-                  //return Dismissible(
-                  //  direction: DismissDirection.endToStart,
-                  //  background: Container(
-                  return Material(
-                    child: InkWell(
-                        child: Container(
-                          width: 50, //sets width for the text boxes
-                          alignment: Alignment
-                              .centerLeft, //sets text aligned to the left
-                          child: medDisplayLine2(
-                              //sets the text for each box
-                              snapshot.data![position]
-                                  .proprietaryName //inserts drug's proprietary name into box
-                                  .toString(),
-                              snapshot.data![position]
-                                  .nonproprietaryName //inserts drug's nonproprietary name into same box
-                                  .toString()),
-                          padding: const EdgeInsets.all(3.0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blueAccent)),
-                          //padding: EdgeInserts.symmetric(horizontal: 10.0),
-                          //child: Icon(Icons.delete_forever),
-
-                          //child: Text(
-                          //  snapshot.data![position].nonproprietaryName.toString(),
-                          //  style: TextStyle(
-                          //    fontSize: 16,
-                          //    color: Colors.white,
-                          //),
-                          //),
-                        ),
-                        onTap: () {
-                          print(snapshot.data![position].prodNDC.toString());
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MedDetailsPage(
-                                      drug: snapshot.data![position])));
-                        }),
-                    color: Colors.transparent,
-                  );
-
-                  //key: UniqueKey(),
-                  //);
-                },
-              ));
+          int length = snapshot.data!.length;
+          if (length != null) {
+            searchLength = length;
+          }
+          return medDisplayList(snapshot);
         } else {
           return Center(child: CircularProgressIndicator());
         }
       },
     );
+  }
+
+  Widget medDisplayList(AsyncSnapshot<List<Drug>> druglist) {
+    int length = druglist.data!.length;
+    int itemDisplayCount = 10;
+    if (length != null) {
+      searchLength = length;
+      if (length - searchOffset < 10) {
+        itemDisplayCount = length - searchOffset;
+      }
+    }
+    List<Drug> paginatedList = druglist.data!.sublist(this.searchOffset);
+    return Expanded(
+        child: Container(
+            height:
+                450, //sets height for total list field, prevents overflowing
+            child: ListView.builder(
+              scrollDirection:
+                  Axis.vertical, //allows list to be scrollable vertically
+              shrinkWrap: true,
+              itemCount: itemDisplayCount,
+              itemBuilder: (context, position) {
+                return Material(
+                  child: InkWell(
+                      child: Container(
+                        width: 50, //sets width for the text boxes
+                        alignment: Alignment
+                            .centerLeft, //sets text aligned to the left
+                        child: medDisplayLine2(
+                            paginatedList[position]
+                                .proprietaryName //inserts drug's proprietary name into box
+                                .toString(),
+                            paginatedList[position]
+                                .nonproprietaryName //inserts drug's nonproprietary name into same box
+                                .toString(),
+                            paginatedList[position]),
+                        padding: const EdgeInsets.all(3.0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.blueAccent)),
+                      ),
+                      onTap: () {
+                        print(paginatedList[position].prodNDC.toString());
+                        if (paginatedList[position]
+                                .prodTypeName
+                                .toLowerCase() ==
+                            'human otc drug') {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OTCFormPage(
+                                      drug: paginatedList[position])));
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MedFormPage(
+                                      drug: paginatedList[position])));
+                        }
+                      }),
+                  color: Colors.transparent,
+                );
+              },
+            )));
   }
 
   Widget medDisplayWidgetRecent() {
@@ -246,11 +353,9 @@ class _QuicklistPageState extends State<QuicklistPage> {
         if (snapshot.hasData) {
           return ListView.builder(
             shrinkWrap: true,
-            itemCount: snapshot.data?.length,
+            //itemCount: snapshot.data?.length,
+            itemCount: 10,
             itemBuilder: (context, position) {
-              //return Dismissible(
-              //  direction: DismissDirection.endToStart,
-              //  background: Container(
               return InkWell(
                 onTap: () {
                   print('hey I did the thing');
@@ -263,23 +368,11 @@ class _QuicklistPageState extends State<QuicklistPage> {
                     alignment: Alignment.centerLeft,
                     child: medDisplayLine2(
                         snapshot.data![position].proprietaryName.toString(),
-                        snapshot.data![position].nonproprietaryName.toString()),
-                    //padding: EdgeInserts.symmetric(horizontal: 10.0),
-                    //child: Icon(Icons.delete_forever),
-
-                    //child: Text(
-                    //  snapshot.data![position].nonproprietaryName.toString(),
-                    //  style: TextStyle(
-                    //    fontSize: 16,
-                    //    color: Colors.white,
-                    //),
-                    //),
+                        snapshot.data![position].nonproprietaryName.toString(),
+                        snapshot.data![position]),
                   ),
                 ),
               );
-
-              //key: UniqueKey(),
-              //);
             },
           );
         } else {
@@ -307,34 +400,3 @@ class _QuicklistPageState extends State<QuicklistPage> {
     //rows.forEach(print);
   }
 }
-// class _RapidchartPageState extends State<RapidchartPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         appBar: AppBar(
-//           title: Text('RapidChart'),
-//         ),
-//         body: Column(
-//           children: <Widget>[
-//             Expanded(child: _buildRCList(context)),
-//           ],
-//         ),
-//         floatingActionButton: FloatingActionButton(
-//           // #JPK #LearningDart: https://github.com/AbdulRahmanAlHamali/flutter_pagewise/issues/63#issuecomment-587512197
-//           onPressed: () => _showAddItemSheet(context),
-//           tooltip: 'Add Item',
-//           child: Icon(Icons.add),
-//         ));
-//   }
-
-//   _buildRCList(var context) {}
-
-//   _showAddItemSheet(var context) {
-//     showBottomSheet(
-//         context: context,
-//         builder: (context) => Container(
-//               color: Colors.lightBlue[50],
-//               child: AddRapidchartItemInput(),
-//             ));
-//   }
-// }

@@ -18,46 +18,28 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:flutter_slidable/flutter_slidable.dart';
+import '../drug.dart';
 
-// import '../data/drift_database.dart';
-// import 'widget/add_rc_item_input_widget.dart';
-
-class DashboardPage extends StatefulWidget {
-  @override
-  _DashboardPageState createState() => _DashboardPageState();
-}
-
-class _DashboardPageState extends State<DashboardPage> {
+class MedFormPage extends StatelessWidget {
+  const MedFormPage({Key? key, required this.drug}) : super(key: key);
+  final Drug drug;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: Text('Add Prescription'),
       ),
-      body: Column(
-        children: <Widget>[
-          ListView(
-            shrinkWrap: true,
-            children: const <Widget>[
-              ListTile(
-                leading: Icon(Icons.medication),
-                title: Text('Current Medications'),
-              ),
-            ],
-          ),
-          ListView(
-            shrinkWrap: true,
-            children: const <Widget>[
-              ListTile(
-                leading: Icon(Icons.medication),
-                title: Text('Recent Medications'),
-              ),
-            ],
-          ),
-        ],
-      ),
+      // body: Column(children: [
+      //   Container(width: 250, child: Text("AHHHHHHHHHHHHHHHHHHHH")),
+      // ]
+      //     //     child: ElevatedButton.icon(
+      //     //   icon: const Icon(Icons.arrow_back_ios_new),
+      //     //   label: Text('Back'),
+      //     //   onPressed: () {
+      //     //     Navigator.pop(context);
+      //     //   },
+      //     // )
+      //     ),
     );
   }
 }

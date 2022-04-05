@@ -31,11 +31,63 @@ class MedDetailsPage extends StatelessWidget {
       ),
       body: Column(children: [
         Container(
-            width: 250, child: Text("Substance Name: " + drug.substanceName)),
+            //color: Colors.blue[600],
+            width: 500,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              "Substance Name: " + drug.substanceName,
+              style: const TextStyle(fontSize: 15),
+            )),
         Container(
-            width: 250,
+          //left empty for padding
+          width: 500,
+          height: 2,
+          //padding: const EdgeInsets.symmetric(vertical: 100),
+          color: Colors.grey[300],
+          child: const Text(" "),
+        ),
+        Container(
+            width: 500,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            // color: Colors.pink[600],
+            //padding: EdgeInsets.only(top: 150, bottom: 150),
             child: Text("NonProprietary Name: " + drug.nonproprietaryName)),
-        Container(width: 250, child: Text("NDC Number: " + drug.prodNDC)),
+        Container(
+          //Left empty for padding
+          width: 500,
+          height: 2,
+          color: Colors.grey[300],
+          child: const Text(" "),
+        ),
+        Container(
+            //color: Colors.red[600],
+            width: 500,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text("NDC Number: " + drug.prodNDC)),
+        Container(
+          //Left empty for padding
+          width: 500,
+          height: 2,
+          color: Colors.grey[300],
+          child: const Text(" "),
+        ),
+        Container(
+            //color: Colors.red[600],
+            width: 500,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text("Dosage Form Name: " + drug.dosageFormName)),
+        Container(
+          //Left empty for padding
+          width: 500,
+          height: 2,
+          color: Colors.grey[300],
+          child: const Text(" "),
+        ),
+        Container(
+            //color: Colors.red[600],
+            width: 500,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text("Route Name: " + drug.routeName)),
       ]
           //     child: ElevatedButton.icon(
           //   icon: const Icon(Icons.arrow_back_ios_new),
