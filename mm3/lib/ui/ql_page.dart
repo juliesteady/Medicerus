@@ -267,14 +267,12 @@ class _QuicklistPageState extends State<QuicklistPage> {
 
   Widget medDisplayWidgetCurrent(String searchQuery) {
     print('runquery');
+    Future<List<Drug>> drugs = this.dbHelper.searchDrugs(searchQuery);
+    Future<int> druglistlength = _setDrugListLength(drugs);
     return FutureBuilder(
-      future: this.dbHelper.searchDrugs(searchQuery),
+      future: drugs,
       builder: (BuildContext context, AsyncSnapshot<List<Drug>> snapshot) {
         if (snapshot.hasData) {
-          int length = snapshot.data!.length;
-          if (length != null) {
-            searchLength = length;
-          }
           return medDisplayList(snapshot);
         } else {
           return Center(child: CircularProgressIndicator());
@@ -398,5 +396,18 @@ class _QuicklistPageState extends State<QuicklistPage> {
     //  print(drugs[i].toString());
     // }
     //rows.forEach(print);
+  }
+
+  Future<int> _setDrugListLength(Future<List<Drug>> druglist) async {
+    return await druglist.then((value) {
+      if (value != null && value.length != searchLength) {
+        setState(() {
+          searchLength = value.length;
+        });
+        return value.length;
+      } else {
+        return 0;
+      }
+    });
   }
 }
