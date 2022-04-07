@@ -29,74 +29,122 @@ class MedDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(drug.proprietaryName),
       ),
-      body: Column(children: [
-        Container(
-            //color: Colors.blue[600],
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(children: [
+          Container(
+              //color: Colors.blue[600],
+              width: 500,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: RichText(
+                text: TextSpan(
+                    style: const TextStyle(fontSize: 15, color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "Substance Name: ",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: drug.substanceName,
+                      )
+                    ]),
+              )),
+          Container(
+            //left empty for padding
             width: 500,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              "Substance Name: " + drug.substanceName,
-              style: const TextStyle(fontSize: 15),
-            )),
-        Container(
-          //left empty for padding
-          width: 500,
-          height: 2,
-          //padding: const EdgeInsets.symmetric(vertical: 100),
-          color: Colors.grey[300],
-          child: const Text(" "),
-        ),
-        Container(
-            width: 500,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            // color: Colors.pink[600],
-            //padding: EdgeInsets.only(top: 150, bottom: 150),
-            child: Text("NonProprietary Name: " + drug.nonproprietaryName)),
-        Container(
-          //Left empty for padding
-          width: 500,
-          height: 2,
-          color: Colors.grey[300],
-          child: const Text(" "),
-        ),
-        Container(
-            //color: Colors.red[600],
-            width: 500,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text("NDC Number: " + drug.prodNDC)),
-        Container(
-          //Left empty for padding
-          width: 500,
-          height: 2,
-          color: Colors.grey[300],
-          child: const Text(" "),
-        ),
-        Container(
-            //color: Colors.red[600],
-            width: 500,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text("Dosage Form Name: " + drug.dosageFormName)),
-        Container(
-          //Left empty for padding
-          width: 500,
-          height: 2,
-          color: Colors.grey[300],
-          child: const Text(" "),
-        ),
-        Container(
-            //color: Colors.red[600],
-            width: 500,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text("Route Name: " + drug.routeName)),
-      ]
-          //     child: ElevatedButton.icon(
-          //   icon: const Icon(Icons.arrow_back_ios_new),
-          //   label: Text('Back'),
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // )
+            height: 2,
+            //padding: const EdgeInsets.symmetric(vertical: 100),
+            color: Colors.grey[300],
+            child: const Text(" "),
           ),
+          // Container(
+          //     width: 500,
+          //     padding: const EdgeInsets.symmetric(vertical: 10),
+          //     // color: Colors.pink[600],
+          //     //padding: EdgeInsets.only(top: 150, bottom: 150),
+          //     child: Text("NonProprietary Name: " + drug.nonproprietaryName)),
+          // Container(
+          //   //Left empty for padding
+          //   width: 500,
+          //   height: 2,
+          //   color: Colors.grey[300],
+          //   child: const Text(" "),
+          // ),
+          Container(
+              //color: Colors.red[600],
+              width: 500,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: RichText(
+                text: TextSpan(
+                    style: const TextStyle(fontSize: 15, color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "NDC Number: ",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: drug.prodNDC,
+                      )
+                    ]),
+              )),
+          Container(
+            //Left empty for padding
+            width: 500,
+            height: 2,
+            color: Colors.grey[300],
+            child: const Text(" "),
+          ),
+          Container(
+              //color: Colors.red[600],
+              width: 500,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: RichText(
+                text: TextSpan(
+                    style: const TextStyle(fontSize: 15, color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "Dosage Form Name: ",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: drug.dosageFormName,
+                      )
+                    ]),
+              )),
+          Container(
+            //Left empty for padding
+            width: 500,
+            height: 2,
+            color: Colors.grey[300],
+            child: const Text(" "),
+          ),
+          Container(
+              //color: Colors.red[600],
+              width: 500,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: RichText(
+                text: TextSpan(
+                    style: const TextStyle(fontSize: 15, color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "Route: ",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: drug.routeName,
+                      )
+                    ]),
+              )),
+        ]
+            //     child: ElevatedButton.icon(
+            //   icon: const Icon(Icons.arrow_back_ios_new),
+            //   label: Text('Back'),
+            //   onPressed: () {
+            //     Navigator.pop(context);
+            //   },
+            // )
+            ),
+      ),
     );
   }
 }
