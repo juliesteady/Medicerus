@@ -280,6 +280,14 @@ class _QuicklistPageState extends State<QuicklistPage> {
       future: drugs,
       builder: (BuildContext context, AsyncSnapshot<List<Drug>> snapshot) {
         if (snapshot.hasData) {
+          if (snapshot.data!.isEmpty) {
+            return Container(
+                height: 450,
+                child: const Text(
+                  'No results found.',
+                  style: TextStyle(fontSize: 20),
+                ));
+          }
           return medDisplayList(snapshot);
         } else {
           return Center(child: CircularProgressIndicator());
