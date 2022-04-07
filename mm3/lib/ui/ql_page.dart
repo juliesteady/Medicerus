@@ -137,6 +137,43 @@ class _QuicklistPageState extends State<QuicklistPage> {
                             });
                           },
                   ),
+                  PopupMenuButton(
+                    icon: const Icon(Icons.create, color: Colors.white),
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                      const PopupMenuItem(
+                        child: ListTile(
+                          //leading: Icon(Icons.add),
+                          title: Text("New Prescription"),
+                        ),
+                        value: 0,
+                      ),
+                      const PopupMenuItem(
+                        child: ListTile(
+                          //leading: Icon(Icons.add),
+                          title: Text("New OTC Drug"),
+                        ),
+                        value: 1,
+                      ),
+                    ],
+                    //onSelected block found at https://stackoverflow.com/questions/59478364/how-to-use-ontap-or-onpressed-in-popupmenuitem, user no_fate
+                    onSelected: (result) {
+                      if (result == 0) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MedFormPage()),
+                        );
+                      } else if (result == 1) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => OTCFormPage()),
+                        );
+                      }
+                    },
+                    //padding: EdgeInsets.symmetric(vertical: 75, horizontal: 75),
+                    //offset: const Offset(0, -270),
+                  ),
                 ]),
           ),
         ],
