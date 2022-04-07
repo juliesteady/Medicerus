@@ -46,100 +46,107 @@ class _QuicklistPageState extends State<QuicklistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search medications',
-              hintStyle: TextStyle(
-                color: Colors.black54,
-                fontSize: 18,
-                fontStyle: FontStyle.italic,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              fillColor: Colors.white,
-              filled: true,
-              isDense: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+      appBar: AppBar(
+        title: TextField(
+          decoration: InputDecoration(
+            hintText: 'Search medications',
+            hintStyle: TextStyle(
+              color: Colors.black54,
+              fontSize: 18,
+              fontStyle: FontStyle.italic,
             ),
-            style: TextStyle(
-              color: Colors.black,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            onChanged: (text) {
+            fillColor: Colors.white,
+            filled: true,
+            isDense: true,
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+          ),
+          style: TextStyle(
+            color: Colors.black,
+          ),
+          onChanged: (text) {
+            searchQuery = text;
+          },
+          onSubmitted: (text) {
+            setState(() {
               searchQuery = text;
-            },
-            onSubmitted: (text) {
+              searchOffset = 0;
+            });
+          },
+        ),
+        backgroundColor: Colors.indigo[900],
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: searchIcon,
+            onPressed: () {
+              FocusManager.instance.primaryFocus?.unfocus();
               setState(() {
-                searchQuery = text;
+                searchQuery = searchQuery;
                 searchOffset = 0;
               });
             },
-          ),
-          backgroundColor: Colors.indigo[900],
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: searchIcon,
-              onPressed: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                setState(() {
-                  searchQuery = searchQuery;
-                  searchOffset = 0;
-                });
-              },
-            )
-          ],
-          centerTitle: true,
-        ),
-        body: Column(
-          children: <Widget>[
-            medDisplayWidgetCurrent(searchQuery),
-            Container(
-              color: Colors.indigo[900],
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    ElevatedButton(
-                      child: Text(
-                        'Back',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      //onPressed: _queryRecentDrugs,
-                      onPressed: (searchOffset != 0)
-                          ? () {
-                              if (searchOffset - 10 >= 0) {
-                                setState(() {
-                                  searchOffset = searchOffset - 10;
-                                });
-                              } else {
-                                print("At beginning of query range");
-                              }
-                            }
-                          : null,
+          )
+        ],
+        centerTitle: true,
+      ),
+      body: Column(
+        children: <Widget>[
+          medDisplayWidgetCurrent(searchQuery),
+          // const Spacer(),
+          Container(
+            color: Colors.indigo[900],
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ElevatedButton(
+                    child: Text(
+                      'Back',
+                      style: TextStyle(fontSize: 20),
                     ),
-                    ElevatedButton(
-                      child: Text(
-                        'Next',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      //onPressed: _queryRecentDrugs,
-                      onPressed: (searchOffset == searchLength ||
-                              (searchLength - searchOffset) < 10)
-                          // (searchOffset + 10) - searchLength < 10)
-                          ? null
-                          : () {
+                    //onPressed: _queryRecentDrugs,
+                    onPressed: (searchOffset != 0)
+                        ? () {
+                            if (searchOffset - 10 >= 0) {
                               setState(() {
-                                searchOffset = searchOffset + 10;
-                                print(searchOffset);
+                                searchOffset = searchOffset - 10;
                               });
-                            },
+                            } else {
+                              print("At beginning of query range");
+                            }
+                          }
+                        : null,
+                  ),
+                  ElevatedButton(
+                    child: Text(
+                      'Next',
+                      style: TextStyle(fontSize: 20),
                     ),
-                  ]),
-            ),
-          ],
-        ));
+                    //onPressed: _queryRecentDrugs,
+                    onPressed: (searchOffset == searchLength ||
+                            (searchLength - searchOffset) <= 10)
+                        // (searchOffset + 10) - searchLength < 10)
+                        ? null
+                        : () {
+                            setState(() {
+                              searchOffset = searchOffset + 10;
+                              print(searchOffset);
+                            });
+                          },
+                  ),
+                ]),
+          ),
+        ],
+      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _queryDrugs,
+      //   tooltip: 'Add Custom Medication',
+      //   child: const Icon(Icons.add),
+      // ),
+    );
   }
 
   // Widget medDisplayLine(String displayLine) {
@@ -285,7 +292,6 @@ class _QuicklistPageState extends State<QuicklistPage> {
     int length = druglist.data!.length;
     int itemDisplayCount = 10;
     if (length != null) {
-      searchLength = length;
       if (length - searchOffset < 10) {
         itemDisplayCount = length - searchOffset;
       }

@@ -21,8 +21,8 @@ import 'package:flutter/material.dart';
 import '../drug.dart';
 
 class MedFormPage extends StatelessWidget {
-  const MedFormPage({Key? key, required this.drug}) : super(key: key);
-  final Drug drug;
+  const MedFormPage({Key? key, this.drug}) : super(key: key);
+  final Drug? drug;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
