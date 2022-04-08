@@ -17,6 +17,7 @@
 
 *************************************************************/
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -38,14 +39,76 @@ class MedviewPage extends StatefulWidget {
 }
 
 class _MedviewPageState extends State<MedviewPage> {
+  final List<Widget> _medicationWidgets = [];
+
+  void _addMedicationWidget() {
+    setState(() {
+      _medicationWidgets.add(_medication());
+    });
+  }
+
+  Widget _medication() {
+    return Container(
+      height: 150,
+      width: double.infinity,
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: CupertinoColors.lightBackgroundGray,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text("This is a widget."),
+                ]),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MedView'),
+        title: const Text('MedView'),
+        centerTitle: true,
       ),
-      body: Column(
-        children: <Widget>[],
+      body: ListView.builder(
+          itemCount: _medicationWidgets.length,
+          itemBuilder: (context, index) {
+            return Dismissible(
+              child: _medication(),
+              key: UniqueKey(),
+              onDismissed: (DismissDirection direction) {
+                setState(() {
+                  _medicationWidgets.removeAt(index);
+                });
+              },
+              secondaryBackground: Container(
+                child: const Center(
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+                color: Colors.red,
+              ),
+              background: Container(),
+              direction: DismissDirection.endToStart,
+            );
+          }),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: Icon(Icons.add),
+        label: Text('Add Drug'),
+        onPressed: _addMedicationWidget,
       ),
     );
   }
