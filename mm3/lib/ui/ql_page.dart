@@ -171,39 +171,13 @@ class _QuicklistPageState extends State<QuicklistPage> {
                         );
                       }
                     },
-                    //padding: EdgeInsets.symmetric(vertical: 75, horizontal: 75),
-                    //offset: const Offset(0, -270),
                   ),
                 ]),
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _queryDrugs,
-      //   tooltip: 'Add Custom Medication',
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
-
-  // Widget medDisplayLine(String displayLine) {
-  //   return Builder(builder: (BuildContext context) {
-  //     return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-  //       Container(
-  //           constraints: BoxConstraints(maxWidth: 20),
-  //           padding: EdgeInsets.all(10),
-  //           child: Icon(Icons.medical_services)),
-  //       Container(
-  //           constraints: BoxConstraints(maxWidth: 1000),
-  //           padding: EdgeInsets.all(10),
-  //           child: Text(displayLine,
-  //               style: TextStyle(
-  //                 fontSize: 16,
-  //                 color: Colors.white,
-  //               ))),
-  //     ]);
-  //   });
-  // }
 
   Widget medDisplayLine2(
       String proprietname, String nonproprietname, Drug drug) {
@@ -226,11 +200,7 @@ class _QuicklistPageState extends State<QuicklistPage> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-              constraints: BoxConstraints(maxWidth: 25),
-              // padding: EdgeInsets.all(10),
-              // child: Icon(Icons.medical_services)
-              child: medIcon),
+          Container(constraints: BoxConstraints(maxWidth: 25), child: medIcon),
           Column(children: [
             Container(
                 width: 325,
@@ -298,10 +268,7 @@ class _QuicklistPageState extends State<QuicklistPage> {
                     );
                   }
                 },
-                //padding: EdgeInsets.symmetric(vertical: 75, horizontal: 75),
-                //offset: const Offset(0, -270),
               ),
-              //)
             ],
           ),
         ],
