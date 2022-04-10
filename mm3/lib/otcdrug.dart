@@ -39,9 +39,3 @@ class OTCDrug {
       this.details,
       this.substanceName});
 }
-
-// enum frequency {
-//   twicedaily,
-//   daily,
-//   everyotherday,
-// }
