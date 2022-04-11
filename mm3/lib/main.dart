@@ -107,10 +107,14 @@ class _MyHomePageState extends State<MyHomePage>
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(40.0),
+        child: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+          backgroundColor: Colors.blue.shade900,
+        ),
       ),
       bottomNavigationBar: bottomTabs(),
       body: TabBarView(
@@ -167,10 +171,10 @@ class _MyHomePageState extends State<MyHomePage>
           unselectedLabelColor: Colors.white,
           labelColor: Colors.amber,
           tabs: [
-            Tab(icon: new Icon(Icons.launch)),
-            Tab(icon: new Icon(Icons.medication)),
+            Tab(icon: new Icon(Icons.home)),
+            Tab(icon: new Icon(Icons.storage)),
             // "QuickList" Tab
-            Tab(icon: new Icon(Icons.speed))
+            Tab(icon: new Icon(Icons.search))
             //Tab(icon: new Icon(Entypo.aircraft-take-off)),
             // "Medications" Tab
           ],
