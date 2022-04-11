@@ -34,25 +34,34 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: const Text('Dashboard'),
+        centerTitle: true,
       ),
       body: Column(
         children: <Widget>[
           ListView(
             shrinkWrap: true,
-            children: const <Widget>[
+            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+            children: <Widget>[
               ListTile(
                 leading: Icon(Icons.medication),
-                title: Text('Current Medications'),
+                tileColor: Colors.lightBlue.shade100,
+                //title: const Center( child:
+                title: const Text('Current Medications'),
+                //)
               ),
             ],
           ),
           ListView(
             shrinkWrap: true,
-            children: const <Widget>[
+            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+            children: <Widget>[
               ListTile(
+                tileColor: Colors.lightBlue.shade100,
                 leading: Icon(Icons.medication),
-                title: Text('Recent Medications'),
+                //title: const Center( child:
+                title: const Text('Recent Medications'),
+                //)
               ),
             ],
           ),
