@@ -27,19 +27,96 @@ class OTCFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Over the Counter Medication'),
+        title: const Text('Add Over the Counter Medication'),
       ),
-      // body: Column(children: [
-      //   Container(width: 250, child: Text("AHHHHHHHHHHHHHHHHHHHH")),
-      // ]
-      //     //     child: ElevatedButton.icon(
-      //     //   icon: const Icon(Icons.arrow_back_ios_new),
-      //     //   label: Text('Back'),
-      //     //   onPressed: () {
-      //     //     Navigator.pop(context);
-      //     //   },
-      //     // )
-      //     ),
+      body: Column(
+        children: [
+          Text(
+            drug!.proprietaryName,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const OTCForm(),
+        ],
+      ),
+    );
+  }
+}
+
+class OTCForm extends StatefulWidget {
+  const OTCForm({Key? key}) : super(key: key);
+
+  @override
+  MyCustomFormState createState() {
+    return MyCustomFormState();
+  }
+}
+
+class MyCustomFormState extends State<OTCForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Container(
+          margin: const EdgeInsets.all(5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter an amount',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an amount';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter the unit (tablet/ml/tablespoons/etc)',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the unit';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter the required time',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a time';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter any warnings/details',
+                ),
+              ),
+            ],
+          )),
     );
   }
 }

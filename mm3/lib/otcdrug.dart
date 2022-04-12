@@ -9,7 +9,7 @@ class OTCDrugFields {
     details,
     substanceName,
   ];
-  static final int id = 0;
+  static final int? id = 0;
   static final String name = 'name';
   static final int recAmount = 0;
   static final String unit = ''; //ml, tablets?
@@ -20,7 +20,7 @@ class OTCDrugFields {
 }
 
 class OTCDrug {
-  final int id;
+  final int? id;
   final String name;
   final int recAmount;
   final String unit; //ml, tablets?
@@ -30,7 +30,7 @@ class OTCDrug {
   final String? substanceName; //multi-valued
 
   const OTCDrug(
-      {required this.id,
+      {this.id,
       required this.name,
       required this.recAmount,
       required this.unit,
@@ -39,9 +39,3 @@ class OTCDrug {
       this.details,
       this.substanceName});
 }
-
-// enum frequency {
-//   twicedaily,
-//   daily,
-//   everyotherday,
-// }

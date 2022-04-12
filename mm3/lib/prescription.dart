@@ -5,7 +5,7 @@ class PrescriptionFields {
     totalAmount.toString(),
     unit,
     daySupply.toString(),
-    reqAmountPerDay.toString(),
+    // reqAmountPerDay.toString(),
     rxNumber,
     fillDate.toString(),
     expDate.toString(),
@@ -18,7 +18,7 @@ class PrescriptionFields {
   static final int totalAmount = 0;
   static final String unit = ''; //ml, tablets?
   static final int daySupply = 0;
-  static final int reqAmountPerDay = 0;
+  // static final int reqAmountPerDay = 0;
   static final String? rxNumber = 'rxNum';
   static final DateTime fillDate = DateTime.now();
   static final DateTime? expDate = null;
@@ -28,12 +28,12 @@ class PrescriptionFields {
 }
 
 class Prescription {
-  final int id;
+  final int? id;
   final String name;
   final int totalAmount;
   final String unit; //ml, tablets?
   final int daySupply;
-  final int reqAmountPerDay;
+  // final int reqAmountPerDay;
   final String? rxNumber;
   final DateTime fillDate;
   final DateTime? expDate;
@@ -42,12 +42,12 @@ class Prescription {
   final String? substanceName; //multi-valued
 
   const Prescription({
-    required this.id,
+    this.id,
     required this.name,
     required this.totalAmount,
     required this.unit,
     required this.daySupply,
-    required this.reqAmountPerDay,
+    // required this.reqAmountPerDay,
     this.rxNumber,
     required this.fillDate,
     this.expDate,
