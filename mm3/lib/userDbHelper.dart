@@ -137,6 +137,96 @@ class UserDatabaseHelper {
     });
   }
 
+  insertOrUpdatePrescription(Prescription presc) async {
+    final db = await instance.database;
+    Map<String, dynamic> row = {
+      'id': presc.id,
+      'name': presc.name,
+      'totalamount': presc.totalAmount,
+      'unit': presc.unit,
+      'daysupply': presc.daySupply,
+      'filldate': presc.fillDate.toString(),
+      'rxnumber': presc.rxNumber,
+      'expdate': presc.expDate.toString(),
+      'details': presc.details,
+      'pharmphonenum': presc.pharmPhoneNum,
+      'substancename': presc.substanceName
+    };
+    if (presc.id != null) {
+      int updateCount = await db
+          .update('prescriptions', row, where: 'id = ?', whereArgs: [presc.id]);
+    } else {
+      int id = await db.insert('prescriptions', row);
+    }
+    print(await db.query('prescriptions'));
+  }
+
+  insertOrUpdateOTCDrug(OTCDrug otc) async {
+    final db = await instance.database;
+    Map<String, dynamic> row = {
+      'id': otc.id,
+      'name': otc.name,
+      'recamount': otc.recAmount,
+      'unit': otc.unit,
+      'rectime': otc.recTime,
+      'rectimetype': otc.recTimeType,
+      'details': otc.details,
+      'substancename': otc.substanceName
+    };
+    if (otc.id != null) {
+      int updateCount = await db
+          .update('otcdrugs', row, where: 'id = ?', whereArgs: [otc.id]);
+    } else {
+      int id = await db.insert('otcdrugs', row);
+    }
+    print(await db.query('otcdrugs'));
+  }
+
+  insertOrUpdateMedLog(MedLog medlog) async {
+    final db = await instance.database;
+    Map<String, dynamic> row = {
+      'id': medlog.id,
+      'name': medlog.name,
+      'timetaken': medlog.timetaken,
+      'prescriptionstatus': medlog.prescriptionstatus,
+      'prescid': medlog.prescid,
+      'otcid': medlog.prescid,
+      'amounttaken': medlog.amounttaken,
+      'unit': medlog.unit,
+      'substancename': medlog.substanceName
+    };
+    if (medlog.id != null) {
+      int updateCount = await db
+          .update('medlog', row, where: 'id = ?', whereArgs: [medlog.id]);
+    } else {
+      int id = await db.insert('medlog', row);
+    }
+  }
+
+  deletePrescription(Prescription presc) async {
+    final db = await instance.database;
+    if (presc.id != null) {
+      int deleteCount = await db
+          .delete('prescriptions', where: 'id = ?', whereArgs: [presc.id]);
+    }
+  }
+
+  deleteOTCDrug(OTCDrug otc) async {
+    final db = await instance.database;
+    if (otc.id != null) {
+      int deleteCount =
+          await db.delete('otcdrugs', where: 'id = ?', whereArgs: [otc.id]);
+    }
+  }
+
+  deleteMedLog(MedLog medlog) async {
+    final db = await instance.database;
+    if (medlog.id != null) {
+      int deleteCount =
+          await db.delete('medlog', where: 'id = ?', whereArgs: [medlog.id]);
+    }
+  }
+
   static const _databaseName = "usermed.db";
 
   static const _databaseVersion = 1;
