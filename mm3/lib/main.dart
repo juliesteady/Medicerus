@@ -114,6 +114,12 @@ class _MyHomePageState extends State<MyHomePage>
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
           backgroundColor: Colors.blue.shade900,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () {},
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: bottomTabs(),
@@ -156,11 +162,14 @@ class _MyHomePageState extends State<MyHomePage>
       //     ],
       //   ),
       // ),
+
+      /*
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+      */
     );
   }
 
