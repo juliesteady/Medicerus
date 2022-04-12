@@ -36,6 +36,7 @@ class UserDatabaseHelper {
   }
 
   Future _onCreate(Database db, int version) async {
+    print('create user db');
     await db.execute('''
       CREATE TABLE prescriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,14 +44,13 @@ class UserDatabaseHelper {
         totalamount INTEGER NOT NULL,
         unit TEXT NOT NULL,
         daysupply INTEGER NOT NULL,
-        reqamountperday INTEGER GENERATED ALWAYS
-          AS (totalamount / daysupply),
         rxnumber TEXT,
         filldate TEXT NOT NULL,
         expdate TEXT,
         details TEXT,
         pharmphonenum TEXT,
         substancename TEXT
+        pinned INTEGER NOT NULL DEFAULT 0,
       );
       
       CREATE TABLE otcdrugs (
@@ -62,6 +62,7 @@ class UserDatabaseHelper {
         rectimetype TEXT NOT NULL,
         details TEXT,
         substancename TEXT
+        pinned INTEGER NOT NULL DEFAULT 0,
       );
       
       CREATE TABLE medlog (
@@ -91,10 +92,10 @@ class UserDatabaseHelper {
           totalAmount: presclist[i]['totalamount'],
           unit: presclist[i]['unit'],
           daySupply: presclist[i]['daysupply'],
-          reqAmountPerDay: presclist[i]['reqamountperday'],
-          fillDate: presclist[i]['filldate'],
+          // reqAmountPerDay: presclist[i]['reqamountperday'],
+          fillDate: DateTime.parse(presclist[i]['filldate']),
           rxNumber: presclist[i]['rxnumber'],
-          expDate: presclist[i]['expdate'],
+          expDate: DateTime.tryParse(presclist[i]['expdate']),
           details: presclist[i]['details'],
           pharmPhoneNum: presclist[i]['pharmphonenum'],
           substanceName: presclist[i]['substancename']);
@@ -104,7 +105,7 @@ class UserDatabaseHelper {
   Future<List<OTCDrug>> getOTCDrugs() async {
     final db = await instance.database;
     List<Map<String, dynamic>> otclist =
-        await db.rawQuery('SELECT * from prescriptions');
+        await db.rawQuery('SELECT * from otcdrugs');
     return List.generate(otclist.length, (i) {
       return OTCDrug(
           id: otclist[i]['id'],
@@ -121,7 +122,7 @@ class UserDatabaseHelper {
   Future<List<MedLog>> getMedLog() async {
     final db = await instance.database;
     List<Map<String, dynamic>> medloglist =
-        await db.rawQuery('SELECT * from prescriptions');
+        await db.rawQuery('SELECT * from medlog');
     return List.generate(medloglist.length, (i) {
       return MedLog(
           id: medloglist[i]['id'],

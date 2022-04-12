@@ -10,7 +10,7 @@ class MedLogFields {
     unit,
     substanceName,
   ];
-  static final int id = 0;
+  static final int? id = 0;
   static final String name = 'name';
   static final String timetaken = 'timetaken';
   static final bool prescriptionstatus = false;
@@ -22,7 +22,7 @@ class MedLogFields {
 }
 
 class MedLog {
-  final int id;
+  final int? id;
   final String name;
   final String timetaken;
   final bool prescriptionstatus;
@@ -33,7 +33,7 @@ class MedLog {
   final String? substanceName; //multi-valued
 
   const MedLog(
-      {required this.id,
+      {this.id,
       required this.name,
       required this.timetaken,
       required this.prescriptionstatus,
