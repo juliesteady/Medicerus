@@ -27,6 +27,8 @@ import 'package:flutter/widgets.dart';
 
 import '../drug.dart';
 import '../dbHelper.dart';
+import '../prescription.dart';
+import '../userDbHelper.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -40,14 +42,22 @@ class MedviewPage extends StatefulWidget {
 
 class _MedviewPageState extends State<MedviewPage> {
   final List<Widget> _medicationWidgets = [];
+  late Future<List<Prescription>> prescriptions;
+  final userdbHelper = UserDatabaseHelper.instance;
 
-  void _addMedicationWidget() {
-    setState(() {
-      _medicationWidgets.add(_medication());
-    });
+  // void _addMedicationWidget() {
+  //   setState(() {
+  //     _medicationWidgets.add(_medication());
+  //   });
+  // }
+
+  @protected
+  @mustCallSuper
+  void initState() {
+    prescriptions = userdbHelper.getPrescriptions();
   }
 
-  Widget _medication() {
+  Widget _medication(Prescription presc) {
     return Container(
       height: 150,
       width: double.infinity,
@@ -60,11 +70,10 @@ class _MedviewPageState extends State<MedviewPage> {
       child: Row(
         children: [
           Expanded(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text("This is a widget."),
-                ]),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(presc.name),
+            ]),
           ),
         ],
       ),
@@ -73,43 +82,84 @@ class _MedviewPageState extends State<MedviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    // prescriptions = userdbHelper.getPrescriptions();
     return Scaffold(
       appBar: AppBar(
         title: const Text('MedView'),
         centerTitle: true,
       ),
-      body: ListView.builder(
-          itemCount: _medicationWidgets.length,
-          itemBuilder: (context, index) {
-            return Dismissible(
-              child: _medication(),
-              key: UniqueKey(),
-              onDismissed: (DismissDirection direction) {
-                setState(() {
-                  _medicationWidgets.removeAt(index);
-                });
-              },
-              secondaryBackground: Container(
-                child: const Center(
-                  child: Text(
-                    'Delete',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
-                  ),
-                ),
-                color: Colors.red,
-              ),
-              background: Container(),
-              direction: DismissDirection.endToStart,
-            );
+      body: FutureBuilder(
+          future: prescriptions,
+          builder: (BuildContext context,
+              AsyncSnapshot<List<Prescription>> snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!.isEmpty) {
+                return Container(
+                    height: 450,
+                    child: const Text(
+                      'No current prescriptions.',
+                      style: TextStyle(fontSize: 20),
+                    ));
+              }
+              return ListView.builder(
+                  // itemCount: _medicationWidgets.length,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      child: _medication(snapshot.data![index]),
+                      key: UniqueKey(),
+                      onDismissed: (DismissDirection direction) {
+                        userdbHelper.deletePrescription(snapshot.data![index]);
+                        setState(() {
+                          // _medicationWidgets.removeAt(index);
+                          prescriptions = userdbHelper.getPrescriptions();
+                        });
+                      },
+                      secondaryBackground: Container(
+                        child: const Center(
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                            ),
+                          ),
+                        ),
+                        color: Colors.red,
+                      ),
+                      background: Container(),
+                      direction: DismissDirection.endToStart,
+                    );
+                  });
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
           }),
       floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(Icons.add),
-        label: Text('Add Drug'),
-        onPressed: _addMedicationWidget,
-      ),
+          icon: Icon(Icons.add),
+          label: Text('Add Drug'),
+          // onPressed: _addMedicationWidget,
+          onPressed: () {
+            _insertPrescription();
+          }),
     );
+  }
+
+  _insertPrescription() async {
+    Prescription testpresc = Prescription(
+      name: 'drug name',
+      totalAmount: 30,
+      unit: 'mg',
+      daySupply: 30,
+      fillDate: DateTime.parse('2022-04-11'),
+    );
+    userdbHelper.insertOrUpdatePrescription(testpresc);
+    setState(() {
+      prescriptions = userdbHelper.getPrescriptions();
+    });
+    //   Database db = await UserDatabaseHelper.instance.database;
+    //   db.execute(
+    //       '''INSERT INTO prescriptions (name, totalamount, unit, daysupply, rxnumber, filldate, expdate, details, substancename)
+    // VALUES ('Medicine Name', 60, 'mg', 2, 'rx number', '2022-04-11', '2022-05-11', 'take 2 a day', 'some substance');''');
   }
 }

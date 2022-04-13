@@ -19,6 +19,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:medicerus/ui/dash_page.dart';
+import 'package:medicerus/ui/history_log.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart';
@@ -156,11 +157,11 @@ class _MyHomePageState extends State<MyHomePage>
       //     ],
       //   ),
       // ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _incrementCounter,
+      //   tooltip: 'Increment',
+      //   child: const Icon(Icons.add),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 

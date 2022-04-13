@@ -18,6 +18,9 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
+import 'package:medicerus/prescription.dart';
+import 'package:medicerus/userDbHelper.dart';
+import 'package:sqflite/sqflite.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -30,6 +33,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  final userdbHelper = UserDatabaseHelper.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +54,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 title: const Text('Current Medications'),
                 //)
               ),
+              // medDisplayCurrent()
             ],
           ),
           ListView(
@@ -69,4 +74,100 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
+
+  // Widget medDisplayCurrent() {
+  //   print('run query on prescriptions');
+  //   Future<List<Prescription>> prescriptions =
+  //       this.userdbHelper.getPrescriptions();
+  //   // Future<int> druglistlength = _setDrugListLength(drugs);
+  //   return FutureBuilder(
+  //     future: prescriptions,
+  //     builder:
+  //         (BuildContext context, AsyncSnapshot<List<Prescription>> snapshot) {
+  //       if (snapshot.hasData) {
+  //         if (snapshot.data!.isEmpty) {
+  //           return Container(
+  //               height: 450,
+  //               child: const Text(
+  //                 'No current prescriptions.',
+  //                 style: TextStyle(fontSize: 20),
+  //               ));
+  //         }
+  //         return prescriptionListDisplay(snapshot);
+  //       } else {
+  //         return Center(child: CircularProgressIndicator());
+  //       }
+  //     },
+  //   );
+  // }
+
+  // Widget prescriptionListDisplay(AsyncSnapshot<List<Prescription>> presclist) {
+  //   int length = presclist.data!.length;
+  //   int itemDisplayCount = 10;
+  //   return Expanded(
+  //       child: Container(
+  //           height:
+  //               450, //sets height for total list field, prevents overflowing
+  //           child: ListView.builder(
+  //             scrollDirection:
+  //                 Axis.vertical, //allows list to be scrollable vertically
+  //             shrinkWrap: true,
+  //             itemCount: length,
+  //             itemBuilder: (context, position) {
+  //               return Material(
+  //                 child: InkWell(
+  //                     child: Container(
+  //                       width: 50, //sets width for the text boxes
+  //                       alignment: Alignment
+  //                           .centerLeft, //sets text aligned to the left
+  //                       child: displayPrescription(presclist.data![position]),
+  //                       padding: const EdgeInsets.all(3.0),
+  //                       decoration: BoxDecoration(
+  //                           border: Border.all(color: Colors.blueAccent)),
+  //                     ),
+  //                     onTap: () {
+  //                       print(presclist.data![position].name);
+  //                     }),
+  //                 color: Colors.transparent,
+  //               );
+  //             },
+  //           )));
+  // }
+
+  // Widget displayPrescription(Prescription presc) {
+  //   return Builder(builder: (BuildContext context) {
+  //     return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+  //       Container(
+  //           constraints: BoxConstraints(maxWidth: 25),
+  //           child: Icon(Icons.medication)),
+  //       Column(children: [
+  //         Container(
+  //             width: 325,
+  //             padding: const EdgeInsets.symmetric(vertical: 2),
+  //             //child: new Flexible(
+  //             //padding: const EdgeInsets.all(20.0),
+  //             child: Text(
+  //               presc.name,
+  //               style: const TextStyle(
+  //                 fontSize: 16,
+  //                 color: Colors.black,
+  //               ),
+  //               textAlign: TextAlign.left,
+  //             )), //),
+  //         Container(
+  //             width: 325,
+  //             padding: const EdgeInsets.symmetric(vertical: 2),
+  //             //child: new Flexible(
+  //             child: Text(
+  //               (presc.totalAmount / presc.daySupply).toString(),
+  //               style: TextStyle(
+  //                 fontSize: 16,
+  //                 color: Colors.grey[700],
+  //               ),
+  //               textAlign: TextAlign.left,
+  //             )),
+  //       ])
+  //     ]); //),
+  //   });
+  // }
 }

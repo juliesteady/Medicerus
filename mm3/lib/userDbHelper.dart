@@ -49,10 +49,11 @@ class UserDatabaseHelper {
         expdate TEXT,
         details TEXT,
         pharmphonenum TEXT,
-        substancename TEXT
-        pinned INTEGER NOT NULL DEFAULT 0,
+        substancename TEXT,
+        pinned INTEGER NOT NULL DEFAULT 0
       );
-      
+      ''');
+    await db.execute('''
       CREATE TABLE otcdrugs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -61,10 +62,11 @@ class UserDatabaseHelper {
         rectime TEXT NOT NULL,
         rectimetype TEXT NOT NULL,
         details TEXT,
-        substancename TEXT
-        pinned INTEGER NOT NULL DEFAULT 0,
-      );
-      
+        substancename TEXT,
+        pinned INTEGER NOT NULL DEFAULT 0
+      )
+      ''');
+    await db.execute('''
       CREATE TABLE medlog (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -77,7 +79,7 @@ class UserDatabaseHelper {
         substancename TEXT,
         FOREIGN KEY(prescid) REFERENCES prescription (id),
         FOREIGN KEY(otcid) REFERENCES otcdrug (id)
-      );
+      )
     ''');
   }
 
@@ -121,14 +123,17 @@ class UserDatabaseHelper {
 
   Future<List<MedLog>> getMedLog() async {
     final db = await instance.database;
+    // print(await db.query("sqlite_master"));
     List<Map<String, dynamic>> medloglist =
         await db.rawQuery('SELECT * from medlog');
+
     return List.generate(medloglist.length, (i) {
       return MedLog(
           id: medloglist[i]['id'],
           name: medloglist[i]['name'],
           timetaken: medloglist[i]['timetaken'],
-          prescriptionstatus: medloglist[i]['prescriptionstatus'],
+          prescriptionstatus:
+              medloglist[i]['prescriptionstatus'] == 0 ? false : true,
           prescid: medloglist[i]['prescid'],
           otcid: medloglist[i]['otcid'],
           amounttaken: medloglist[i]['amounttaken'],
