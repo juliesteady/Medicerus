@@ -139,6 +139,8 @@ class _QuicklistPageState extends State<QuicklistPage> {
                   ),
                   PopupMenuButton(
                     icon: const Icon(Icons.create, color: Colors.white),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
                     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                       const PopupMenuItem(
                         child: ListTile(
