@@ -117,8 +117,13 @@ class _MyHomePageState extends State<MyHomePage>
           backgroundColor: Colors.blue.shade900,
           actions: [
             IconButton(
-              icon: Icon(Icons.more_vert),
-              onPressed: () {},
+              icon: Icon(Icons.history),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => (HistoryLogPage())),
+                );
+              },
             ),
           ],
         ),
