@@ -18,7 +18,11 @@
 *************************************************************/
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:medicerus/ui/mv_page.dart';
 import '../drug.dart';
+import '../otcdrug.dart';
+import '../userDbHelper.dart';
 
 class OTCFormPage extends StatelessWidget {
   const OTCFormPage({Key? key, this.drug}) : super(key: key);
@@ -56,6 +60,23 @@ class OTCForm extends StatefulWidget {
 
 class MyCustomFormState extends State<OTCForm> {
   final _formKey = GlobalKey<FormState>();
+  final amountController = TextEditingController();
+  final formController = TextEditingController();
+  final timeController = TextEditingController();
+  final timetypeController = TextEditingController();
+  final detailsController = TextEditingController();
+  OTCDrug otcDrug =
+      OTCDrug(name: '', recAmount: 0, unit: '', recTime: 0, recTimeType: '');
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    amountController.dispose();
+    formController.dispose();
+    timeController.dispose();
+    detailsController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +88,11 @@ class MyCustomFormState extends State<OTCForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: amountController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter an amount',
+                  labelText: 'Enter a usage amount',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -81,24 +103,26 @@ class MyCustomFormState extends State<OTCForm> {
               ),
               const SizedBox(height: 8.0),
               TextFormField(
+                controller: formController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter the unit (tablet/ml/tablespoons/etc)',
+                  labelText: 'Enter the drug form',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter the unit';
+                    return 'Please enter the drug form';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 8.0),
               TextFormField(
+                controller: timeController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter the required time',
+                  labelText: 'Enter the usage time',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -109,10 +133,39 @@ class MyCustomFormState extends State<OTCForm> {
               ),
               const SizedBox(height: 8.0),
               TextFormField(
+                controller: timetypeController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter any warnings/details',
+                  labelText: 'Enter the time type',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a time type';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                controller: detailsController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter any warnings or details',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Processing Data')),
+                      );
+                    }
+                  },
+                  child: const Text('Submit'),
                 ),
               ),
             ],

@@ -29,7 +29,7 @@ class OTCDrug {
   final String? details;
   final String? substanceName; //multi-valued
 
-  const OTCDrug(
+  OTCDrug(
       {this.id,
       required this.name,
       required this.recAmount,

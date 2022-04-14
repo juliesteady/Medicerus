@@ -29,6 +29,7 @@ import '../drug.dart';
 import '../dbHelper.dart';
 import '../prescription.dart';
 import '../userDbHelper.dart';
+import '../otcdrug.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -36,6 +37,9 @@ import '../userDbHelper.dart';
 // import 'widget/add_mv_item_input_widget.dart';
 
 class MedviewPage extends StatefulWidget {
+  const MedviewPage({Key? key, this.otcDrug}) : super(key: key);
+  final OTCDrug? otcDrug;
+
   @override
   _MedviewPageState createState() => _MedviewPageState();
 }
@@ -43,6 +47,7 @@ class MedviewPage extends StatefulWidget {
 class _MedviewPageState extends State<MedviewPage> {
   final List<Widget> _medicationWidgets = [];
   late Future<List<Prescription>> prescriptions;
+  late Future<List<OTCDrug>> otcDrugs;
   final userdbHelper = UserDatabaseHelper.instance;
 
   // void _addMedicationWidget() {
@@ -55,9 +60,10 @@ class _MedviewPageState extends State<MedviewPage> {
   @mustCallSuper
   void initState() {
     prescriptions = userdbHelper.getPrescriptions();
+    otcDrugs = userdbHelper.getOTCDrugs();
   }
 
-  Widget _medication(Prescription presc) {
+  Widget _prescWidget(Prescription presc) {
     return Container(
       height: 150,
       width: double.infinity,
@@ -73,6 +79,29 @@ class _MedviewPageState extends State<MedviewPage> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(presc.name),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _otcWidget(OTCDrug otcDrug) {
+    return Container(
+      height: 150,
+      width: double.infinity,
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: CupertinoColors.lightBackgroundGray,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(otcDrug.name),
             ]),
           ),
         ],
@@ -106,7 +135,7 @@ class _MedviewPageState extends State<MedviewPage> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Dismissible(
-                      child: _medication(snapshot.data![index]),
+                      child: _prescWidget(snapshot.data![index]),
                       key: UniqueKey(),
                       onDismissed: (DismissDirection direction) {
                         userdbHelper.deletePrescription(snapshot.data![index]);
@@ -143,6 +172,20 @@ class _MedviewPageState extends State<MedviewPage> {
             _insertPrescription();
           }),
     );
+  }
+
+  _insertOTCDrug() async {
+    OTCDrug testotc = OTCDrug(
+      name: 'drug name',
+      recAmount: 0,
+      unit: 'tablet',
+      recTime: 0,
+      recTimeType: 'hours',
+    );
+    userdbHelper.insertOrUpdateOTCDrug(testotc);
+    setState(() {
+      otcDrugs = userdbHelper.getOTCDrugs();
+    });
   }
 
   _insertPrescription() async {
