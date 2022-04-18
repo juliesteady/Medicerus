@@ -161,7 +161,32 @@ class UserDatabaseHelper {
           otcid: medloglist[i]['otcid'],
           amounttaken: medloglist[i]['amounttaken'],
           unit: medloglist[i]['unit'],
-          substanceName: medloglist[i]['substance']);
+          substanceName: medloglist[i]['substancename']);
+    });
+  }
+
+  Future<List<MedLog>> searchMedLog(search) async {
+    final db = await instance.database;
+    List<Map<String, dynamic>> medloglist = await db.rawQuery(
+        'SELECT * from medlog WHERE LOWER(name) like LOWER(\"%' +
+            search +
+            '%\") OR LOWER(timetaken) like LOWER(\"%' +
+            search +
+            '%\") OR LOWER(substancename) like LOWER(\"%' +
+            search +
+            '%\")');
+    return List.generate(medloglist.length, (i) {
+      return MedLog(
+          id: medloglist[i]['id'],
+          name: medloglist[i]['name'],
+          timetaken: medloglist[i]['timetaken'],
+          prescriptionstatus:
+              medloglist[i]['prescriptionstatus'] == 0 ? false : true,
+          prescid: medloglist[i]['prescid'],
+          otcid: medloglist[i]['otcid'],
+          amounttaken: medloglist[i]['amounttaken'],
+          unit: medloglist[i]['unit'],
+          substanceName: medloglist[i]['substancename']);
     });
   }
 

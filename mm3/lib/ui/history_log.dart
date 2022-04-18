@@ -22,45 +22,108 @@ import '../drug.dart';
 import '../medlog.dart';
 import '../userDbHelper.dart';
 
-class HistoryLogPage extends StatelessWidget {
+class HistoryLogPage extends StatefulWidget {
   HistoryLogPage({
     Key? key,
   }) : super(key: key);
+  @override
+  _HistoryLogPage createState() => _HistoryLogPage();
+}
+
+class _HistoryLogPage extends State<HistoryLogPage> {
   final userdbHelper = UserDatabaseHelper.instance;
+  late Future<List<MedLog>> loglist;
+  String searchQuery = '';
+
+  @protected
+  @mustCallSuper
+  void initState() {
+    loglist = userdbHelper.getMedLog();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('History Log'),
       ),
-      body: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(children: <Widget>[
-            historyLogDisplay()
-            //medDisplayWidgetCurrent(searchQuery),
-            // const Spacer(),
-          ])),
+      body: Column(
+        children: [
+          AppBar(
+            backgroundColor: Colors.indigo[900],
+            title: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search log',
+                hintStyle: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 18,
+                  fontStyle: FontStyle.italic,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                fillColor: Colors.white,
+                filled: true,
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10.0),
+              ),
+              style: TextStyle(
+                color: Colors.black,
+              ),
+              onChanged: (text) {
+                searchQuery = text;
+              },
+              onSubmitted: (text) {
+                setState(() {
+                  searchQuery = text;
+                  loglist = userdbHelper.searchMedLog(searchQuery);
+                });
+              },
+            ),
+            automaticallyImplyLeading: false,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  setState(() {
+                    searchQuery = searchQuery;
+                  });
+                },
+              )
+            ],
+          ),
+          Expanded(
+            child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(children: <Widget>[historyLogDisplay()])),
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // _insertPrescription();
           _insertMedLog();
         },
-        tooltip: 'Increment',
+        tooltip: 'Test Add MedLog',
         child: const Icon(Icons.add),
       ),
     );
   }
 
   Widget historyLogDisplay() {
-    print('runquery');
-    Future<List<MedLog>> logs = this.userdbHelper.getMedLog();
+    // print('runquery');
+    // Future<List<MedLog>> logs = this.userdbHelper.getMedLog();
     //Future<int> druglistlength = _setDrugListLength(drugs);
     return FutureBuilder(
-      future: logs,
+      future: loglist,
       builder: (BuildContext context, AsyncSnapshot<List<MedLog>> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
             return Container(
+                // resizeToAvoidBottomInset: false,
                 height: 450,
                 child: const Text(
                   'No logged medications.',
@@ -112,6 +175,10 @@ class HistoryLogPage extends StatelessWidget {
 //     } else {
 //       medType = 'Prescription Drug';
 //     }
+    String substancename = '';
+    if (log.substanceName != null) {
+      substancename = log.substanceName!;
+    }
     return Builder(builder: (BuildContext context) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -155,6 +222,18 @@ class HistoryLogPage extends StatelessWidget {
                   ),
                   textAlign: TextAlign.left,
                 )),
+            Container(
+                width: 325,
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                //child: new Flexible(
+                child: Text(
+                  substancename,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
+                  textAlign: TextAlign.left,
+                ))
             // Container(
             //     width: 325,
             //     padding: const EdgeInsets.symmetric(vertical: 2),
@@ -175,14 +254,14 @@ class HistoryLogPage extends StatelessWidget {
 
   _insertMedLog() async {
     MedLog testlog = MedLog(
-        name: 'drug name',
+        name: 'other drug name',
         timetaken: DateTime.now().toString(),
         prescriptionstatus: false,
         prescid: 2,
         otcid: null,
         amounttaken: 20,
         unit: 'mg',
-        substanceName: 'subtance yeahhhhhh');
+        substanceName: 'acetaminophen');
     userdbHelper.insertOrUpdateMedLog(testlog);
     //   Database db = await UserDatabaseHelper.instance.database;
     //   db.execute(

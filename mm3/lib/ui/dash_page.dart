@@ -118,7 +118,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget pinnedListDisplay(AsyncSnapshot<List<Prescription>> presclist) {
     int length = presclist.data!.length;
-    return Expanded(
+    return Container(
         child: Container(
             // height:
             //     450, //sets height for total list field, prevents overflowing
