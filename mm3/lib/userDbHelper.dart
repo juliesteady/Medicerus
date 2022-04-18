@@ -212,7 +212,7 @@ class UserDatabaseHelper {
     } else {
       int id = await db.insert('prescriptions', row);
     }
-    print(await db.query('prescriptions'));
+    // print(await db.query('prescriptions'));
   }
 
   insertOrUpdateOTCDrug(OTCDrug otc) async {
@@ -233,7 +233,7 @@ class UserDatabaseHelper {
     } else {
       int id = await db.insert('otcdrugs', row);
     }
-    print(await db.query('otcdrugs'));
+    // print(await db.query('otcdrugs'));
   }
 
   insertOrUpdateMedLog(MedLog medlog) async {

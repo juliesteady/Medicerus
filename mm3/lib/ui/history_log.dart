@@ -102,21 +102,10 @@ class _HistoryLogPage extends State<HistoryLogPage> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // _insertPrescription();
-          _insertMedLog();
-        },
-        tooltip: 'Test Add MedLog',
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
   Widget historyLogDisplay() {
-    // print('runquery');
-    // Future<List<MedLog>> logs = this.userdbHelper.getMedLog();
-    //Future<int> druglistlength = _setDrugListLength(drugs);
     return FutureBuilder(
       future: loglist,
       builder: (BuildContext context, AsyncSnapshot<List<MedLog>> snapshot) {
@@ -169,12 +158,6 @@ class _HistoryLogPage extends State<HistoryLogPage> {
   }
 
   Widget medLogDisplayLine(MedLog log) {
-// String medType = '';
-//     if (drug.prodTypeName.toLowerCase() == 'human otc drug') {
-//       medType = 'Over the Counter';
-//     } else {
-//       medType = 'Prescription Drug';
-//     }
     String substancename = '';
     if (log.substanceName != null) {
       substancename = log.substanceName!;
@@ -188,8 +171,6 @@ class _HistoryLogPage extends State<HistoryLogPage> {
             Container(
                 width: 325,
                 padding: const EdgeInsets.symmetric(vertical: 2),
-                //child: new Flexible(
-                //padding: const EdgeInsets.all(20.0),
                 child: Text(
                   log.name,
                   style: const TextStyle(
@@ -201,7 +182,6 @@ class _HistoryLogPage extends State<HistoryLogPage> {
             Container(
                 width: 325,
                 padding: const EdgeInsets.symmetric(vertical: 2),
-                //child: new Flexible(
                 child: Text(
                   log.timetaken,
                   style: TextStyle(
@@ -213,7 +193,6 @@ class _HistoryLogPage extends State<HistoryLogPage> {
             Container(
                 width: 325,
                 padding: const EdgeInsets.symmetric(vertical: 2),
-                //child: new Flexible(
                 child: Text(
                   log.amounttaken.toString() + ' ' + log.unit,
                   style: TextStyle(
@@ -225,7 +204,6 @@ class _HistoryLogPage extends State<HistoryLogPage> {
             Container(
                 width: 325,
                 padding: const EdgeInsets.symmetric(vertical: 2),
-                //child: new Flexible(
                 child: Text(
                   substancename,
                   style: TextStyle(
@@ -234,18 +212,6 @@ class _HistoryLogPage extends State<HistoryLogPage> {
                   ),
                   textAlign: TextAlign.left,
                 ))
-            // Container(
-            //     width: 325,
-            //     padding: const EdgeInsets.symmetric(vertical: 2),
-            //     //child: new Flexible(
-            //     child: Text(
-            //       log.unit,
-            //       style: TextStyle(
-            //         fontSize: 14,
-            //         color: Colors.grey[500],
-            //       ),
-            //       textAlign: TextAlign.left,
-            //     )),
           ]),
         ],
       );

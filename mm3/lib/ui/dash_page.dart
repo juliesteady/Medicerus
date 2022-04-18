@@ -138,7 +138,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     BoxDecoration(border: Border.all(color: Colors.blueAccent)),
               ),
               onTap: () {
-                print(presclist.data![position].name);
+                // print(presclist.data![position].name);
               }),
           color: Colors.transparent,
         );
@@ -215,8 +215,6 @@ class _DashboardPageState extends State<DashboardPage> {
           Container(
               width: 325,
               padding: const EdgeInsets.symmetric(vertical: 2),
-              //child: new Flexible(
-              //padding: const EdgeInsets.all(20.0),
               child: Text(
                 presc.name,
                 style: const TextStyle(
@@ -230,7 +228,9 @@ class _DashboardPageState extends State<DashboardPage> {
               padding: const EdgeInsets.symmetric(vertical: 2),
               //child: new Flexible(
               child: Text(
-                (presc.totalAmount / presc.daySupply).toString(),
+                (presc.totalAmount / presc.daySupply).toString() +
+                    ' ' +
+                    presc.unit,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[700],
