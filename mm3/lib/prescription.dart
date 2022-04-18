@@ -41,7 +41,7 @@ class Prescription {
   final String? pharmPhoneNum;
   final String? substanceName; //multi-valued
 
-  const Prescription({
+  Prescription({
     this.id,
     required this.name,
     required this.totalAmount,

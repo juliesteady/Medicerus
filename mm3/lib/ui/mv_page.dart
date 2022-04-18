@@ -29,7 +29,6 @@ import '../drug.dart';
 import '../dbHelper.dart';
 import '../prescription.dart';
 import '../userDbHelper.dart';
-import '../otcdrug.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -37,8 +36,10 @@ import '../otcdrug.dart';
 // import 'widget/add_mv_item_input_widget.dart';
 
 class MedviewPage extends StatefulWidget {
-  const MedviewPage({Key? key, this.otcDrug}) : super(key: key);
-  final OTCDrug? otcDrug;
+  const MedviewPage({Key? key, this.prescDrug, this.drugWidget})
+      : super(key: key);
+  final Prescription? prescDrug;
+  final Widget? drugWidget;
 
   @override
   _MedviewPageState createState() => _MedviewPageState();
@@ -47,23 +48,15 @@ class MedviewPage extends StatefulWidget {
 class _MedviewPageState extends State<MedviewPage> {
   final List<Widget> _medicationWidgets = [];
   late Future<List<Prescription>> prescriptions;
-  late Future<List<OTCDrug>> otcDrugs;
   final userdbHelper = UserDatabaseHelper.instance;
-
-  // void _addMedicationWidget() {
-  //   setState(() {
-  //     _medicationWidgets.add(_medication());
-  //   });
-  // }
 
   @protected
   @mustCallSuper
   void initState() {
     prescriptions = userdbHelper.getPrescriptions();
-    otcDrugs = userdbHelper.getOTCDrugs();
   }
 
-  Widget _prescWidget(Prescription presc) {
+  Widget _medication(Prescription presc) {
     return Container(
       height: 150,
       width: double.infinity,
@@ -79,29 +72,10 @@ class _MedviewPageState extends State<MedviewPage> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(presc.name),
-            ]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _otcWidget(OTCDrug otcDrug) {
-    return Container(
-      height: 150,
-      width: double.infinity,
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: CupertinoColors.lightBackgroundGray,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(otcDrug.name),
+              Text(presc.totalAmount.toString()),
+              Text(presc.unit),
+              Text(presc.daySupply.toString()),
+              Text(presc.fillDate.toString()),
             ]),
           ),
         ],
@@ -135,7 +109,7 @@ class _MedviewPageState extends State<MedviewPage> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Dismissible(
-                      child: _prescWidget(snapshot.data![index]),
+                      child: widget.drugWidget!,
                       key: UniqueKey(),
                       onDismissed: (DismissDirection direction) {
                         userdbHelper.deletePrescription(snapshot.data![index]);
@@ -167,36 +141,28 @@ class _MedviewPageState extends State<MedviewPage> {
       floatingActionButton: FloatingActionButton.extended(
           icon: Icon(Icons.add),
           label: Text('Add Drug'),
-          // onPressed: _addMedicationWidget,
+          //onPressed: _addMedicationWidget,
           onPressed: () {
             _insertPrescription();
           }),
     );
   }
 
-  _insertOTCDrug() async {
-    OTCDrug testotc = OTCDrug(
-      name: 'drug name',
-      recAmount: 0,
-      unit: 'tablet',
-      recTime: 0,
-      recTimeType: 'hours',
-    );
-    userdbHelper.insertOrUpdateOTCDrug(testotc);
+  /*void _addMedicationWidget() {
     setState(() {
-      otcDrugs = userdbHelper.getOTCDrugs();
+      _medicationWidgets.add(_medication());
     });
-  }
+  }*/
 
   _insertPrescription() async {
-    Prescription testpresc = Prescription(
-      name: 'drug name',
-      totalAmount: 30,
-      unit: 'mg',
-      daySupply: 30,
-      fillDate: DateTime.parse('2022-04-11'),
+    Prescription thePrescDrug = Prescription(
+      name: widget.prescDrug!.name,
+      totalAmount: widget.prescDrug!.totalAmount,
+      unit: widget.prescDrug!.unit,
+      daySupply: widget.prescDrug!.daySupply,
+      fillDate: widget.prescDrug!.fillDate,
     );
-    userdbHelper.insertOrUpdatePrescription(testpresc);
+    userdbHelper.insertOrUpdatePrescription(thePrescDrug);
     setState(() {
       prescriptions = userdbHelper.getPrescriptions();
     });
