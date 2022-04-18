@@ -12,6 +12,7 @@ class PrescriptionFields {
     details,
     pharmPhoneNum,
     substanceName,
+    pinned.toString(),
   ];
   static final int id = 0;
   static final String name = 'name';
@@ -25,6 +26,7 @@ class PrescriptionFields {
   static final String? details = '';
   static final String? pharmPhoneNum = '';
   static final String? substanceName = 'SubstanceName'; //multi-valued
+  static final bool pinned = false;
 }
 
 class Prescription {
@@ -40,8 +42,9 @@ class Prescription {
   final String? details;
   final String? pharmPhoneNum;
   final String? substanceName; //multi-valued
+  bool pinned;
 
-  const Prescription({
+  Prescription({
     this.id,
     required this.name,
     required this.totalAmount,
@@ -54,6 +57,7 @@ class Prescription {
     this.details,
     this.pharmPhoneNum,
     this.substanceName,
+    required this.pinned,
   });
 }
 

@@ -45,7 +45,7 @@ class MedviewPage extends StatefulWidget {
 }
 
 class _MedviewPageState extends State<MedviewPage> {
-  final List<Widget> _medicationWidgets = [];
+  // final List<Widget> _medicationWidgets = [];
   late Future<List<Prescription>> prescriptions;
   late Future<List<OTCDrug>> otcDrugs;
   final userdbHelper = UserDatabaseHelper.instance;
@@ -64,6 +64,10 @@ class _MedviewPageState extends State<MedviewPage> {
   }
 
   Widget _prescWidget(Prescription presc) {
+    Icon pinIcon = Icon(Icons.push_pin_outlined);
+    if (presc.pinned != null && presc.pinned == true) {
+      pinIcon = Icon(Icons.push_pin);
+    }
     return Container(
       height: 150,
       width: double.infinity,
@@ -81,6 +85,27 @@ class _MedviewPageState extends State<MedviewPage> {
               Text(presc.name),
             ]),
           ),
+          Stack(children: [
+            IconButton(
+                icon: pinIcon,
+                onPressed: () {
+                  presc.pinned = !presc.pinned;
+                  userdbHelper.insertOrUpdatePrescription(presc);
+                  setState(() {
+                    // _medicationWidgets.removeAt(index);
+                    prescriptions = userdbHelper.getPrescriptions();
+                  });
+                }),
+            // IconButton(
+            //     icon: const Icon(Icons.check),
+            //     onPressed: () {
+            //       // userdbHelper.insertOrUpdatePrescription(presc);
+            //       // setState(() {
+            //       //   // _medicationWidgets.removeAt(index);
+            //       //   prescriptions = userdbHelper.getPrescriptions();
+            //       // });
+            //     })
+          ]),
         ],
       ),
     );
@@ -195,6 +220,7 @@ class _MedviewPageState extends State<MedviewPage> {
       unit: 'mg',
       daySupply: 30,
       fillDate: DateTime.parse('2022-04-11'),
+      pinned: false,
     );
     userdbHelper.insertOrUpdatePrescription(testpresc);
     setState(() {

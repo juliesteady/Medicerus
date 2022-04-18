@@ -21,6 +21,8 @@ import 'package:flutter/material.dart';
 import 'package:medicerus/prescription.dart';
 import 'package:medicerus/userDbHelper.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../otcdrug.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -34,6 +36,18 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final userdbHelper = UserDatabaseHelper.instance;
+  late Future<List<Prescription>> prescriptions;
+  late Future<List<Prescription>> pinnedPrescriptions;
+  late Future<List<OTCDrug>> otcDrugs;
+
+  @protected
+  @mustCallSuper
+  void initState() {
+    prescriptions = userdbHelper.getPrescriptions();
+    pinnedPrescriptions = userdbHelper.getPinnedPrescriptions();
+    otcDrugs = userdbHelper.getOTCDrugs();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +57,7 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       body: Column(
         children: <Widget>[
+          medDisplayPinned(),
           ListView(
             shrinkWrap: true,
             padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
@@ -73,6 +88,62 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
     );
+  }
+
+  Widget medDisplayPinned() {
+    return FutureBuilder(
+        future: pinnedPrescriptions,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Prescription>> snapshot) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            return ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.medication),
+                  tileColor: Colors.lightBlue.shade100,
+                  //title: const Center( child:
+                  title: const Text('Pinned Medications'),
+                  //)
+                ),
+                pinnedListDisplay(snapshot),
+              ],
+            );
+          } else {
+            return Container();
+          }
+        });
+  }
+
+  Widget pinnedListDisplay(AsyncSnapshot<List<Prescription>> presclist) {
+    int length = presclist.data!.length;
+    return Expanded(
+        child: Container(
+            // height:
+            //     450, //sets height for total list field, prevents overflowing
+            child: ListView.builder(
+      scrollDirection: Axis.vertical, //allows list to be scrollable vertically
+      shrinkWrap: true,
+      itemCount: length,
+      itemBuilder: (context, position) {
+        return Material(
+          child: InkWell(
+              child: Container(
+                width: 50, //sets width for the text boxes
+                alignment: Alignment.centerLeft, //sets text aligned to the left
+                child: displayPrescription(presclist.data![position]),
+                padding: const EdgeInsets.all(3.0),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+              ),
+              onTap: () {
+                print(presclist.data![position].name);
+              }),
+          color: Colors.transparent,
+        );
+      },
+    )));
   }
 
   // Widget medDisplayCurrent() {
@@ -134,40 +205,40 @@ class _DashboardPageState extends State<DashboardPage> {
   //           )));
   // }
 
-  // Widget displayPrescription(Prescription presc) {
-  //   return Builder(builder: (BuildContext context) {
-  //     return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-  //       Container(
-  //           constraints: BoxConstraints(maxWidth: 25),
-  //           child: Icon(Icons.medication)),
-  //       Column(children: [
-  //         Container(
-  //             width: 325,
-  //             padding: const EdgeInsets.symmetric(vertical: 2),
-  //             //child: new Flexible(
-  //             //padding: const EdgeInsets.all(20.0),
-  //             child: Text(
-  //               presc.name,
-  //               style: const TextStyle(
-  //                 fontSize: 16,
-  //                 color: Colors.black,
-  //               ),
-  //               textAlign: TextAlign.left,
-  //             )), //),
-  //         Container(
-  //             width: 325,
-  //             padding: const EdgeInsets.symmetric(vertical: 2),
-  //             //child: new Flexible(
-  //             child: Text(
-  //               (presc.totalAmount / presc.daySupply).toString(),
-  //               style: TextStyle(
-  //                 fontSize: 16,
-  //                 color: Colors.grey[700],
-  //               ),
-  //               textAlign: TextAlign.left,
-  //             )),
-  //       ])
-  //     ]); //),
-  //   });
-  // }
+  Widget displayPrescription(Prescription presc) {
+    return Builder(builder: (BuildContext context) {
+      return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Container(
+            constraints: BoxConstraints(maxWidth: 25),
+            child: Icon(Icons.medication)),
+        Column(children: [
+          Container(
+              width: 325,
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              //child: new Flexible(
+              //padding: const EdgeInsets.all(20.0),
+              child: Text(
+                presc.name,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.left,
+              )), //),
+          Container(
+              width: 325,
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              //child: new Flexible(
+              child: Text(
+                (presc.totalAmount / presc.daySupply).toString(),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                ),
+                textAlign: TextAlign.left,
+              )),
+        ])
+      ]); //),
+    });
+  }
 }

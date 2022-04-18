@@ -100,7 +100,30 @@ class UserDatabaseHelper {
           expDate: DateTime.tryParse(presclist[i]['expdate']),
           details: presclist[i]['details'],
           pharmPhoneNum: presclist[i]['pharmphonenum'],
-          substanceName: presclist[i]['substancename']);
+          substanceName: presclist[i]['substancename'],
+          pinned: presclist[i]['pinned'] == 0 ? false : true);
+    });
+  }
+
+  Future<List<Prescription>> getPinnedPrescriptions() async {
+    final db = await instance.database;
+    List<Map<String, dynamic>> presclist =
+        await db.rawQuery('SELECT * from prescriptions WHERE pinned = 1');
+    return List.generate(presclist.length, (i) {
+      return Prescription(
+          id: presclist[i]['id'],
+          name: presclist[i]['name'],
+          totalAmount: presclist[i]['totalamount'],
+          unit: presclist[i]['unit'],
+          daySupply: presclist[i]['daysupply'],
+          // reqAmountPerDay: presclist[i]['reqamountperday'],
+          fillDate: DateTime.parse(presclist[i]['filldate']),
+          rxNumber: presclist[i]['rxnumber'],
+          expDate: DateTime.tryParse(presclist[i]['expdate']),
+          details: presclist[i]['details'],
+          pharmPhoneNum: presclist[i]['pharmphonenum'],
+          substanceName: presclist[i]['substancename'],
+          pinned: presclist[i]['pinned'] == 0 ? false : true);
     });
   }
 
@@ -155,7 +178,8 @@ class UserDatabaseHelper {
       'expdate': presc.expDate.toString(),
       'details': presc.details,
       'pharmphonenum': presc.pharmPhoneNum,
-      'substancename': presc.substanceName
+      'substancename': presc.substanceName,
+      'pinned': presc.pinned
     };
     if (presc.id != null) {
       int updateCount = await db
