@@ -27,6 +27,7 @@ import 'package:flutter/widgets.dart';
 
 import '../drug.dart';
 import '../dbHelper.dart';
+import '../medlog.dart';
 import '../prescription.dart';
 import '../userDbHelper.dart';
 import '../otcdrug.dart';
@@ -85,7 +86,7 @@ class _MedviewPageState extends State<MedviewPage> {
               Text(presc.name),
             ]),
           ),
-          Stack(children: [
+          Column(children: [
             IconButton(
                 icon: pinIcon,
                 onPressed: () {
@@ -96,15 +97,17 @@ class _MedviewPageState extends State<MedviewPage> {
                     prescriptions = userdbHelper.getPrescriptions();
                   });
                 }),
-            // IconButton(
-            //     icon: const Icon(Icons.check),
-            //     onPressed: () {
-            //       // userdbHelper.insertOrUpdatePrescription(presc);
-            //       // setState(() {
-            //       //   // _medicationWidgets.removeAt(index);
-            //       //   prescriptions = userdbHelper.getPrescriptions();
-            //       // });
-            //     })
+            IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: () {
+                  MedLog newlog = MedLog.withPresc(presc);
+                  userdbHelper.insertOrUpdateMedLog(newlog);
+                  // userdbHelper.insertOrUpdatePrescription(presc);
+                  // setState(() {
+                  //   // _medicationWidgets.removeAt(index);
+                  //   prescriptions = userdbHelper.getPrescriptions();
+                  // });
+                })
           ]),
         ],
       ),

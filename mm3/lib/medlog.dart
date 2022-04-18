@@ -1,3 +1,5 @@
+import 'prescription.dart';
+
 class MedLogFields {
   static final List<String?> values = [
     id.toString(),
@@ -42,4 +44,15 @@ class MedLog {
       required this.amounttaken,
       required this.unit,
       this.substanceName});
+
+  MedLog.withPresc(Prescription presc)
+      : id = null,
+        name = presc.name,
+        timetaken = DateTime.now().toString(),
+        prescriptionstatus = true,
+        prescid = presc.id,
+        otcid = null,
+        amounttaken = presc.daySupply,
+        unit = presc.unit,
+        substanceName = presc.substanceName;
 }
