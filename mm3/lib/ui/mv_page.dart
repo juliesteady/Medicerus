@@ -17,12 +17,21 @@
 
 *************************************************************/
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'dart:async';
 
-import '../data/drift_database.dart';
-import 'widget/add_mv_item_input_widget.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:flutter/widgets.dart';
+
+import '../drug.dart';
+import '../dbHelper.dart';
+// import 'package:provider/provider.dart';
+// import 'package:flutter_slidable/flutter_slidable.dart';
+
+// import '../data/drift_database.dart';
+// import 'widget/add_mv_item_input_widget.dart';
 
 class MedviewPage extends StatefulWidget {
   @override
@@ -30,33 +39,77 @@ class MedviewPage extends StatefulWidget {
 }
 
 class _MedviewPageState extends State<MedviewPage> {
+  final List<Widget> _medicationWidgets = [];
+
+  void _addMedicationWidget() {
+    setState(() {
+      _medicationWidgets.add(_medication());
+    });
+  }
+
+  Widget _medication() {
+    return Container(
+      height: 150,
+      width: double.infinity,
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: CupertinoColors.lightBackgroundGray,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text("This is a widget."),
+                ]),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('MedView'),
-        ),
-        body: Column(
-          children: <Widget>[
-            Expanded(child: _buildMVList(context)),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          // #JPK #LearningDart: https://github.com/AbdulRahmanAlHamali/flutter_pagewise/issues/63#issuecomment-587512197
-          onPressed: () => _showAddItemSheet(context),
-          tooltip: 'Add Item',
-          child: Icon(Icons.add),
-        ));
-  }
-
-  _buildMVList(var context) {}
-
-  _showAddItemSheet(var context) {
-    showBottomSheet(
-        context: context,
-        builder: (context) => Container(
-              color: Colors.lightBlue[50],
-              child: AddMedviewItemInput(),
-            ));
+      appBar: AppBar(
+        title: const Text('MedView'),
+        centerTitle: true,
+      ),
+      body: ListView.builder(
+          itemCount: _medicationWidgets.length,
+          itemBuilder: (context, index) {
+            return Dismissible(
+              child: _medication(),
+              key: UniqueKey(),
+              onDismissed: (DismissDirection direction) {
+                setState(() {
+                  _medicationWidgets.removeAt(index);
+                });
+              },
+              secondaryBackground: Container(
+                child: const Center(
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+                color: Colors.red,
+              ),
+              background: Container(),
+              direction: DismissDirection.endToStart,
+            );
+          }),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: Icon(Icons.add),
+        label: Text('Add Drug'),
+        onPressed: _addMedicationWidget,
+      ),
+    );
   }
 }

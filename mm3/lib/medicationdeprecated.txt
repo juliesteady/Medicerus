@@ -1,0 +1,99 @@
+//NDC (National Drug Code Directory) database information: https://www.fda.gov/drugs/drug-approvals-and-databases/ndc-product-file-definitions
+//Below, actual in-database names are listed in comments along with any special conditions of each attribute.
+class Medication {
+  final String id; //ProductID
+  final String prodNDC; //ProductNDC
+  final String prodTypeName; //ProductTypeName
+  final String proprietaryName; //ProprietaryName
+  final String? proprietaryNameSuffix; //ProprietaryNameSuffix, nullable
+  final String nonproprietaryName; //NonProprietaryName, multi-valued
+  final String dosageFormName; //DosageFormName
+  final String routeName; //RouteName, multi-valued
+  final String startMarketDate; //StartMarketingDate [include format]
+  final String? endMarketDate; //EndMarketingDate, nullable [include format]
+  final String marketCatName; //MarketingCategoryName
+  final String? applicationNum; //ApplicationNumber, nullable
+  final String labelerName; //LabelerName
+  final String substanceName; //SubstanceName, multi-valued
+  final String strengthNumber; //StrengthNumber, multi-valued
+  final String strengthUnit; //StrengthUnit, multi-valued
+  final String pharmClasses; //Pharm_Classes, multi-valued
+  final String deaSchedule; //DEASchedule
+  final String
+      ndcExcludeFlag; //NDC_Exclude_Flag, check documentation for letter meanings
+  final String listingRecordCertifiedThrough; //Listing_Record_Certified_Through
+
+  const Medication(
+      {required this.id,
+      required this.prodNDC,
+      required this.prodTypeName,
+      required this.proprietaryName,
+      this.proprietaryNameSuffix,
+      required this.nonproprietaryName,
+      required this.dosageFormName,
+      required this.routeName,
+      required this.startMarketDate,
+      this.endMarketDate,
+      required this.marketCatName,
+      this.applicationNum,
+      required this.labelerName,
+      required this.substanceName,
+      required this.strengthNumber,
+      required this.strengthUnit,
+      required this.pharmClasses,
+      required this.deaSchedule,
+      required this.ndcExcludeFlag,
+      required this.listingRecordCertifiedThrough});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'ProductID': id,
+      'ProductNDC': prodNDC,
+      'ProductTypeName': prodTypeName,
+      'ProprietaryTypeName': proprietaryName,
+      'ProprietaryNameSuffix': proprietaryNameSuffix,
+      'NonProprietaryName': nonproprietaryName,
+      'DosageFormName': dosageFormName,
+      'RouteName': routeName,
+      'StartMarketingDate': startMarketDate,
+      'EndMarketingDate': endMarketDate,
+      'MarketingCategoryName': marketCatName,
+      'ApplicationNumber': applicationNum,
+      'LabelerName': labelerName,
+      'SubstanceName': substanceName,
+      'StrengthNumber': strengthNumber,
+      'StrengthUnit': strengthUnit,
+      'Pharm_Classes': pharmClasses,
+      'DEASchedule': deaSchedule,
+      'NDC_Exclude_Flag': ndcExcludeFlag,
+      'Listing_Record_Certified_Through': listingRecordCertifiedThrough
+    };
+  }
+
+  List<Medication> mapToObject(List<Map<String, dynamic>> list) {
+    return List.generate(list.length, (i) {
+      return Medication(
+          id: list[i]['ProductID'],
+          prodNDC: list[i]['ProductNDC'],
+          prodTypeName: list[i]['ProductTypeName'],
+          proprietaryName: list[i]['ProprietaryTypeName'],
+          proprietaryNameSuffix: list[i]['ProprietaryNameSuffix'],
+          nonproprietaryName: list[i]['NonProprietaryName'],
+          dosageFormName: list[i]['DosageFormName'],
+          routeName: list[i]['RouteName'],
+          startMarketDate: list[i]['StartMarketingDate'],
+          endMarketDate: list[i]['EndMarketingDate'],
+          marketCatName: list[i]['MarketingCategoryName'],
+          applicationNum: list[i]['ApplicationNumber'],
+          labelerName: list[i]['LabelerName'],
+          substanceName: list[i]['SubstanceName'],
+          strengthNumber: list[i]['StrengthNumber'],
+          strengthUnit: list[i]['StrengthUnit'],
+          pharmClasses: list[i]['Pharm_Classes'],
+          deaSchedule: list[i]['DEASchedule'],
+          ndcExcludeFlag: list[i]['NDC_Exclude_Flag'],
+          listingRecordCertifiedThrough: list[i]
+              ['Listing_Record_Certified_Through']);
+    });
+  }
+}
