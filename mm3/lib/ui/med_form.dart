@@ -1,38 +1,17 @@
-/************************************************************
-    Medicerus Mobile: Medical Charting App
-    Copyright (C) <2022> Joshua Kramer, et. al.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*************************************************************/
-
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:medicerus/ui/mv_page.dart';
 import '../drug.dart';
-import '../otcdrug.dart';
 import '../prescription.dart';
-import '../ui/mv_page.dart';
+import '../userDbHelper.dart';
 
 class MedFormPage extends StatelessWidget {
   const MedFormPage({Key? key, this.drug}) : super(key: key);
   final Drug? drug;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Over the Counter Medication'),
+        title: const Text('Add Prescription Medication'),
       ),
       body: Column(
         children: [
@@ -67,7 +46,7 @@ class MedFormState extends State<MedForm> {
   final daysupplyController = TextEditingController();
   final filldateController = TextEditingController();
 
-  final List<Widget> _prescDrugWidgets = [];
+  final userdbHelper = UserDatabaseHelper.instance;
 
   // Clean up the controller when the widget is disposed.
   @override
@@ -77,33 +56,6 @@ class MedFormState extends State<MedForm> {
     daysupplyController.dispose();
     filldateController.dispose();
     super.dispose();
-  }
-
-  Widget prescDrugWidget(Prescription prescDrug) {
-    return Container(
-      height: 150,
-      width: double.infinity,
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: CupertinoColors.lightBackgroundGray,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(prescDrug.name),
-              Text(prescDrug.totalAmount.toString()),
-              Text(prescDrug.unit),
-              Text(prescDrug.daySupply.toString()),
-              Text(prescDrug.fillDate.toString()),
-            ]),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -176,30 +128,26 @@ class MedFormState extends State<MedForm> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content:
-                                Text('Added Prescription Drug to Medview Tab')),
-                      );
-                      Prescription prescDrug = Prescription(
-                          name: 'presc drug name',
-                          totalAmount: int.parse(amountController.text),
-                          unit: unitController.text,
-                          daySupply: int.parse(daysupplyController.text),
-                          fillDate: DateTime.parse(filldateController.text));
-                      Widget drugWidget = prescDrugWidget(prescDrug);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MedviewPage(
-                                  prescDrug: prescDrug,
-                                  drugWidget: drugWidget)));
-                    }
-                  },
-                  child: const Text("Add Drug"),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Added Prescription Medication to Medview Tab')),
+                        );
+                        Prescription prescDrug = Prescription(
+                            name: 'presc drug name',
+                            totalAmount: int.parse(amountController.text),
+                            unit: unitController.text,
+                            daySupply: int.parse(daysupplyController.text),
+                            fillDate: DateTime.parse(filldateController.text));
+                        userdbHelper.insertOrUpdatePrescription(prescDrug);
+                      }
+                    },
+                    child: const Text("Add Drug"),
+                  ),
                 ),
               ),
             ],

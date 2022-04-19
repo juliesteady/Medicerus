@@ -1,22 +1,3 @@
-/************************************************************
-    Medicerus Mobile: Medical Charting App
-    Copyright (C) <2022> Joshua Kramer, et. al.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*************************************************************/
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -36,17 +17,13 @@ import '../userDbHelper.dart';
 // import 'widget/add_mv_item_input_widget.dart';
 
 class MedviewPage extends StatefulWidget {
-  const MedviewPage({Key? key, this.prescDrug, this.drugWidget})
-      : super(key: key);
-  final Prescription? prescDrug;
-  final Widget? drugWidget;
+  const MedviewPage({Key? key}) : super(key: key);
 
   @override
   _MedviewPageState createState() => _MedviewPageState();
 }
 
 class _MedviewPageState extends State<MedviewPage> {
-  final List<Widget> _medicationWidgets = [];
   late Future<List<Prescription>> prescriptions;
   final userdbHelper = UserDatabaseHelper.instance;
 
@@ -60,8 +37,8 @@ class _MedviewPageState extends State<MedviewPage> {
     return Container(
       height: 150,
       width: double.infinity,
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(5),
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: CupertinoColors.lightBackgroundGray,
         borderRadius: BorderRadius.circular(15),
@@ -109,7 +86,7 @@ class _MedviewPageState extends State<MedviewPage> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Dismissible(
-                      child: widget.drugWidget!,
+                      child: _medication(snapshot.data![index]),
                       key: UniqueKey(),
                       onDismissed: (DismissDirection direction) {
                         userdbHelper.deletePrescription(snapshot.data![index]);
@@ -138,37 +115,6 @@ class _MedviewPageState extends State<MedviewPage> {
               return Center(child: CircularProgressIndicator());
             }
           }),
-      floatingActionButton: FloatingActionButton.extended(
-          icon: Icon(Icons.add),
-          label: Text('Add Drug'),
-          //onPressed: _addMedicationWidget,
-          onPressed: () {
-            _insertPrescription();
-          }),
     );
-  }
-
-  /*void _addMedicationWidget() {
-    setState(() {
-      _medicationWidgets.add(_medication());
-    });
-  }*/
-
-  _insertPrescription() async {
-    Prescription thePrescDrug = Prescription(
-      name: widget.prescDrug!.name,
-      totalAmount: widget.prescDrug!.totalAmount,
-      unit: widget.prescDrug!.unit,
-      daySupply: widget.prescDrug!.daySupply,
-      fillDate: widget.prescDrug!.fillDate,
-    );
-    userdbHelper.insertOrUpdatePrescription(thePrescDrug);
-    setState(() {
-      prescriptions = userdbHelper.getPrescriptions();
-    });
-    //   Database db = await UserDatabaseHelper.instance.database;
-    //   db.execute(
-    //       '''INSERT INTO prescriptions (name, totalamount, unit, daysupply, rxnumber, filldate, expdate, details, substancename)
-    // VALUES ('Medicine Name', 60, 'mg', 2, 'rx number', '2022-04-11', '2022-05-11', 'take 2 a day', 'some substance');''');
   }
 }
