@@ -123,6 +123,7 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       ),
       bottomNavigationBar: bottomTabs(),
+
       body: TabBarView(
         children: [
           //new Text("This is Dashboard View"),
