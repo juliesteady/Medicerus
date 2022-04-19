@@ -48,11 +48,22 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(presc.name),
-              Text(presc.totalAmount.toString()),
-              Text(presc.unit),
-              Text(presc.daySupply.toString()),
-              Text(presc.fillDate.toString()),
+              Text(
+                presc.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                presc.totalAmount.toString(),
+              ),
+              Text(
+                presc.unit,
+              ),
+              Text(
+                presc.daySupply.toString(),
+              ),
+              Text(
+                presc.fillDate.toString(),
+              ),
             ]),
           ),
         ],

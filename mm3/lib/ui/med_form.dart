@@ -3,49 +3,22 @@ import '../drug.dart';
 import '../prescription.dart';
 import '../userDbHelper.dart';
 
-class MedFormPage extends StatelessWidget {
+class MedFormPage extends StatefulWidget {
   const MedFormPage({Key? key, this.drug}) : super(key: key);
   final Drug? drug;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Prescription Medication'),
-      ),
-      body: Column(
-        children: [
-          Text(
-            drug!.proprietaryName,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const MedForm(),
-        ],
-      ),
-    );
+  MedFormPageState createState() {
+    return MedFormPageState();
   }
 }
 
-class MedForm extends StatefulWidget {
-  const MedForm({Key? key}) : super(key: key);
-
-  @override
-  MedFormState createState() {
-    return MedFormState();
-  }
-}
-
-class MedFormState extends State<MedForm> {
+class MedFormPageState extends State<MedFormPage> {
   final _formKey = GlobalKey<FormState>();
-
   final amountController = TextEditingController();
   final unitController = TextEditingController();
   final daysupplyController = TextEditingController();
   final filldateController = TextEditingController();
-
   final userdbHelper = UserDatabaseHelper.instance;
 
   // Clean up the controller when the widget is disposed.
@@ -58,8 +31,7 @@ class MedFormState extends State<MedForm> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildForm(Prescription presc) {
     return Form(
       key: _formKey,
       child: Container(
@@ -137,13 +109,12 @@ class MedFormState extends State<MedForm> {
                               content: Text(
                                   'Added Prescription Medication to Medview Tab')),
                         );
-                        Prescription prescDrug = Prescription(
-                            name: 'presc drug name',
-                            totalAmount: int.parse(amountController.text),
-                            unit: unitController.text,
-                            daySupply: int.parse(daysupplyController.text),
-                            fillDate: DateTime.parse(filldateController.text));
-                        userdbHelper.insertOrUpdatePrescription(prescDrug);
+                        presc.totalAmount = int.parse(amountController.text);
+                        presc.unit = unitController.text;
+                        presc.daySupply = int.parse(daysupplyController.text);
+                        presc.fillDate =
+                            DateTime.parse(filldateController.text);
+                        userdbHelper.insertOrUpdatePrescription(presc);
                       }
                     },
                     child: const Text("Add Drug"),
@@ -152,6 +123,35 @@ class MedFormState extends State<MedForm> {
               ),
             ],
           )),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String drugName = widget.drug!.proprietaryName;
+    Prescription prescDrug = Prescription(
+        name: drugName,
+        totalAmount: 0,
+        unit: '',
+        daySupply: 0,
+        fillDate: DateTime.now());
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add Prescription Medication'),
+      ),
+      body: Column(
+        children: [
+          Text(
+            prescDrug.name,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          buildForm(prescDrug),
+        ],
+      ),
     );
   }
 }
