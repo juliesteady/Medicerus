@@ -69,12 +69,12 @@ class _MedviewPageState extends State<MedviewPage> {
                   ),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding:
                     EdgeInsets.only(left: 10, bottom: 5, right: 5, top: 20),
                 child: Text(
-                  'Take 2 per day',
-                  style: TextStyle(
+                  "Take ${presc.totalAmount.toString()} ${presc.unit} per day",
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 15,
                   ),
