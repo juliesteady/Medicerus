@@ -90,6 +90,7 @@ class _HistoryLogPage extends State<HistoryLogPage> {
                   FocusManager.instance.primaryFocus?.unfocus();
                   setState(() {
                     searchQuery = searchQuery;
+                    loglist = userdbHelper.searchMedLog(searchQuery);
                   });
                 },
               )

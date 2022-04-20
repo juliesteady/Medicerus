@@ -218,7 +218,7 @@ class _MedviewPageState extends State<MedviewPage> {
 
   _insertPrescription() async {
     Prescription testpresc = Prescription(
-      name: 'drug name',
+      name: 'drug name 2',
       totalAmount: 30,
       unit: 'mg',
       daySupply: 30,

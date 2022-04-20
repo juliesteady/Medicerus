@@ -59,6 +59,11 @@ class Prescription {
     this.substanceName,
     required this.pinned,
   });
+  @override
+  operator ==(other) => other is Prescription && other.id == id;
+
+  @override
+  int get hashCode => (id != null) ? id! : 0;
 }
 
 // enum frequency {

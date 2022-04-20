@@ -38,6 +38,8 @@ class _DashboardPageState extends State<DashboardPage> {
   final userdbHelper = UserDatabaseHelper.instance;
   late Future<List<Prescription>> prescriptions;
   late Future<List<Prescription>> pinnedPrescriptions;
+  late Future<List<Prescription>> loggedPrescriptions;
+  late Future<List<Prescription>> unloggedPrescriptions;
   late Future<List<OTCDrug>> otcDrugs;
 
   @protected
@@ -45,49 +47,81 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     prescriptions = userdbHelper.getPrescriptions();
     pinnedPrescriptions = userdbHelper.getPinnedPrescriptions();
+    loggedPrescriptions = userdbHelper.getLoggedPrescriptions();
+    unloggedPrescriptions = getUnloggedPrescriptions();
     otcDrugs = userdbHelper.getOTCDrugs();
+  }
+
+  Future<List<Prescription>> getUnloggedPrescriptions() async {
+    List<Prescription> presc = await prescriptions;
+    print(presc);
+    List<Prescription> logged = await loggedPrescriptions;
+    print(logged);
+    // List<Prescription> unlogged = [];
+    // presc.forEach((element) {
+    //   int? id = element.id;
+    //   if (id != null) {
+    //     bool shared = false;
+    //     logged.forEach((logElement) {
+    //       if (logElement.id == id) {
+    //         shared = true;
+    //       }
+    //     });
+    //     if (!shared) {
+    //       unlogged.add(element);
+    //     }
+    //   }
+    // });
+    List<Prescription> unlogged =
+        presc.toSet().difference(logged.toSet()).toList();
+    print(unlogged);
+    return unlogged;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: <Widget>[
-          medDisplayPinned(),
-          ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+        appBar: AppBar(
+          title: const Text('Dashboard'),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
             children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.medication),
-                tileColor: Colors.lightBlue.shade100,
-                //title: const Center( child:
-                title: const Text('Current Medications'),
-                //)
+              medDisplayPinned(),
+              ListView(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+                children: <Widget>[
+                  ListTile(
+                    leading: Icon(Icons.medication),
+                    tileColor: Colors.lightBlue.shade100,
+                    //title: const Center( child:
+                    title: const Text('Current Medications'),
+                    //)
+                  ),
+                  medDisplayCurrent()
+                ],
               ),
-              // medDisplayCurrent()
+              ListView(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+                children: <Widget>[
+                  ListTile(
+                    tileColor: Colors.lightBlue.shade100,
+                    leading: Icon(Icons.medication),
+                    //title: const Center( child:
+                    title: const Text('Recent Medications'),
+                    //)
+                  ),
+                  medDisplayLogged(),
+                ],
+              ),
             ],
           ),
-          ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-            children: <Widget>[
-              ListTile(
-                tileColor: Colors.lightBlue.shade100,
-                leading: Icon(Icons.medication),
-                //title: const Center( child:
-                title: const Text('Recent Medications'),
-                //)
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget medDisplayPinned() {
@@ -97,6 +131,7 @@ class _DashboardPageState extends State<DashboardPage> {
             (BuildContext context, AsyncSnapshot<List<Prescription>> snapshot) {
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return ListView(
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               children: <Widget>[
@@ -116,6 +151,26 @@ class _DashboardPageState extends State<DashboardPage> {
         });
   }
 
+  Widget medDisplayLogged() {
+    return FutureBuilder(
+        future: loggedPrescriptions,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Prescription>> snapshot) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            return ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+              children: <Widget>[
+                pinnedListDisplay(snapshot),
+              ],
+            );
+          } else {
+            return Container();
+          }
+        });
+  }
+
   Widget pinnedListDisplay(AsyncSnapshot<List<Prescription>> presclist) {
     int length = presclist.data!.length;
     return Container(
@@ -123,6 +178,7 @@ class _DashboardPageState extends State<DashboardPage> {
             // height:
             //     450, //sets height for total list field, prevents overflowing
             child: ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.vertical, //allows list to be scrollable vertically
       shrinkWrap: true,
       itemCount: length,
@@ -146,31 +202,28 @@ class _DashboardPageState extends State<DashboardPage> {
     )));
   }
 
-  // Widget medDisplayCurrent() {
-  //   print('run query on prescriptions');
-  //   Future<List<Prescription>> prescriptions =
-  //       this.userdbHelper.getPrescriptions();
-  //   // Future<int> druglistlength = _setDrugListLength(drugs);
-  //   return FutureBuilder(
-  //     future: prescriptions,
-  //     builder:
-  //         (BuildContext context, AsyncSnapshot<List<Prescription>> snapshot) {
-  //       if (snapshot.hasData) {
-  //         if (snapshot.data!.isEmpty) {
-  //           return Container(
-  //               height: 450,
-  //               child: const Text(
-  //                 'No current prescriptions.',
-  //                 style: TextStyle(fontSize: 20),
-  //               ));
-  //         }
-  //         return prescriptionListDisplay(snapshot);
-  //       } else {
-  //         return Center(child: CircularProgressIndicator());
-  //       }
-  //     },
-  //   );
-  // }
+  Widget medDisplayCurrent() {
+    // Future<int> druglistlength = _setDrugListLength(drugs);
+    return FutureBuilder(
+      future: unloggedPrescriptions,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<Prescription>> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.isEmpty) {
+            return Container(
+                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
+                child: const Text(
+                  'No prescriptions left to take.',
+                  style: TextStyle(fontSize: 14),
+                ));
+          }
+          return pinnedListDisplay(snapshot);
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
 
   // Widget prescriptionListDisplay(AsyncSnapshot<List<Prescription>> presclist) {
   //   int length = presclist.data!.length;
