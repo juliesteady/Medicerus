@@ -134,7 +134,8 @@ class MedFormPageState extends State<MedFormPage> {
         totalAmount: 0,
         unit: '',
         daySupply: 0,
-        fillDate: DateTime.now());
+        fillDate: DateTime.now(),
+        pinned: false);
 
     return Scaffold(
       appBar: AppBar(
