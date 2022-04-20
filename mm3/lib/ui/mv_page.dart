@@ -1,22 +1,3 @@
-/************************************************************
-    Medicerus Mobile: Medical Charting App
-    Copyright (C) <2022> Joshua Kramer, et. al.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*************************************************************/
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -28,9 +9,9 @@ import 'package:flutter/widgets.dart';
 import '../drug.dart';
 import '../dbHelper.dart';
 import '../medlog.dart';
+import '../otcdrug.dart';
 import '../prescription.dart';
 import '../userDbHelper.dart';
-import '../otcdrug.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -38,8 +19,7 @@ import '../otcdrug.dart';
 // import 'widget/add_mv_item_input_widget.dart';
 
 class MedviewPage extends StatefulWidget {
-  const MedviewPage({Key? key, this.otcDrug}) : super(key: key);
-  final OTCDrug? otcDrug;
+  const MedviewPage({Key? key}) : super(key: key);
 
   @override
   _MedviewPageState createState() => _MedviewPageState();
@@ -50,12 +30,6 @@ class _MedviewPageState extends State<MedviewPage> {
   late Future<List<Prescription>> prescriptions;
   late Future<List<OTCDrug>> otcDrugs;
   final userdbHelper = UserDatabaseHelper.instance;
-
-  // void _addMedicationWidget() {
-  //   setState(() {
-  //     _medicationWidgets.add(_medication());
-  //   });
-  // }
 
   @protected
   @mustCallSuper
@@ -135,12 +109,12 @@ class _MedviewPageState extends State<MedviewPage> {
     );
   }
 
-  Widget _otcWidget(OTCDrug otcDrug) {
+  Widget _medication(Prescription presc) {
     return Container(
       height: 150,
       width: double.infinity,
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(5),
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: CupertinoColors.lightBackgroundGray,
         borderRadius: BorderRadius.circular(15),
@@ -150,7 +124,22 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(otcDrug.name),
+              Text(
+                presc.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                presc.totalAmount.toString(),
+              ),
+              Text(
+                presc.unit,
+              ),
+              Text(
+                presc.daySupply.toString(),
+              ),
+              Text(
+                presc.fillDate.toString(),
+              ),
             ]),
           ),
         ],
@@ -184,7 +173,7 @@ class _MedviewPageState extends State<MedviewPage> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Dismissible(
-                      child: _prescWidget(snapshot.data![index]),
+                      child: _medication(snapshot.data![index]),
                       key: UniqueKey(),
                       onDismissed: (DismissDirection direction) {
                         userdbHelper.deletePrescription(snapshot.data![index]);
@@ -246,13 +235,5 @@ class _MedviewPageState extends State<MedviewPage> {
       fillDate: DateTime.parse('2022-04-11'),
       pinned: false,
     );
-    userdbHelper.insertOrUpdatePrescription(testpresc);
-    setState(() {
-      prescriptions = userdbHelper.getPrescriptions();
-    });
-    //   Database db = await UserDatabaseHelper.instance.database;
-    //   db.execute(
-    //       '''INSERT INTO prescriptions (name, totalamount, unit, daysupply, rxnumber, filldate, expdate, details, substancename)
-    // VALUES ('Medicine Name', 60, 'mg', 2, 'rx number', '2022-04-11', '2022-05-11', 'take 2 a day', 'some substance');''');
   }
 }

@@ -1,25 +1,5 @@
-/************************************************************
-    Medicerus Mobile: Medical Charting App
-    Copyright (C) <2022> Joshua Kramer, et. al.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*************************************************************/
-
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:medicerus/ui/mv_page.dart';
+
 import '../drug.dart';
 import '../otcdrug.dart';
 import '../userDbHelper.dart';
@@ -60,13 +40,14 @@ class OTCForm extends StatefulWidget {
 
 class MyCustomFormState extends State<OTCForm> {
   final _formKey = GlobalKey<FormState>();
+
   final amountController = TextEditingController();
   final formController = TextEditingController();
   final timeController = TextEditingController();
   final timetypeController = TextEditingController();
   final detailsController = TextEditingController();
-  OTCDrug otcDrug =
-      OTCDrug(name: '', recAmount: 0, unit: '', recTime: 0, recTimeType: '');
+
+  final userdbHelper = UserDatabaseHelper.instance;
 
   @override
   void dispose() {
@@ -74,6 +55,7 @@ class MyCustomFormState extends State<OTCForm> {
     amountController.dispose();
     formController.dispose();
     timeController.dispose();
+    timetypeController.dispose();
     detailsController.dispose();
     super.dispose();
   }
@@ -157,15 +139,27 @@ class MyCustomFormState extends State<OTCForm> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Processing Data')),
-                      );
-                    }
-                  },
-                  child: const Text('Submit'),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Added Over the Counter Drug to Medview Tab')),
+                        );
+                        OTCDrug otcDrug = OTCDrug(
+                            name: 'presc drug name',
+                            recAmount: int.parse(amountController.text),
+                            unit: formController.text,
+                            recTime: int.parse(timeController.text),
+                            recTimeType: timetypeController.text,
+                            details: detailsController.text);
+                        userdbHelper.insertOrUpdateOTCDrug(otcDrug);
+                      }
+                    },
+                    child: const Text("Add Drug"),
+                  ),
                 ),
               ),
             ],

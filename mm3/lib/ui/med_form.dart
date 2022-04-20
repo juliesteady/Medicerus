@@ -1,45 +1,158 @@
-/************************************************************
-    Medicerus Mobile: Medical Charting App
-    Copyright (C) <2022> Joshua Kramer, et. al.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*************************************************************/
-
 import 'package:flutter/material.dart';
 import '../drug.dart';
+import '../prescription.dart';
+import '../userDbHelper.dart';
 
-class MedFormPage extends StatelessWidget {
+class MedFormPage extends StatefulWidget {
   const MedFormPage({Key? key, this.drug}) : super(key: key);
   final Drug? drug;
+
+  @override
+  MedFormPageState createState() {
+    return MedFormPageState();
+  }
+}
+
+class MedFormPageState extends State<MedFormPage> {
+  final _formKey = GlobalKey<FormState>();
+  final amountController = TextEditingController();
+  final unitController = TextEditingController();
+  final daysupplyController = TextEditingController();
+  final filldateController = TextEditingController();
+  final userdbHelper = UserDatabaseHelper.instance;
+
+  // Clean up the controller when the widget is disposed.
+  @override
+  void dispose() {
+    amountController.dispose();
+    unitController.dispose();
+    daysupplyController.dispose();
+    filldateController.dispose();
+    super.dispose();
+  }
+
+  Widget buildForm(Prescription presc) {
+    return Form(
+      key: _formKey,
+      child: Container(
+          margin: const EdgeInsets.all(5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: amountController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter a usage amount',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an amount';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                controller: unitController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter the drug form',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the drug form';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                controller: daysupplyController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter the days supplied',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a number of days';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                controller: filldateController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(20.0),
+                  labelText: 'Enter the fill date',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a date';
+                  }
+                  return null;
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Added Prescription Medication to Medview Tab')),
+                        );
+                        presc.totalAmount = int.parse(amountController.text);
+                        presc.unit = unitController.text;
+                        presc.daySupply = int.parse(daysupplyController.text);
+                        presc.fillDate =
+                            DateTime.parse(filldateController.text);
+                        userdbHelper.insertOrUpdatePrescription(presc);
+                      }
+                    },
+                    child: const Text("Add Drug"),
+                  ),
+                ),
+              ),
+            ],
+          )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    String drugName = widget.drug!.proprietaryName;
+    Prescription prescDrug = Prescription(
+        name: drugName,
+        totalAmount: 0,
+        unit: '',
+        daySupply: 0,
+        fillDate: DateTime.now(),
+        pinned: false);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Prescription'),
+        title: const Text('Add Prescription Medication'),
       ),
-      // body: Column(children: [
-      //   Container(width: 250, child: Text("AHHHHHHHHHHHHHHHHHHHH")),
-      // ]
-      //     //     child: ElevatedButton.icon(
-      //     //   icon: const Icon(Icons.arrow_back_ios_new),
-      //     //   label: Text('Back'),
-      //     //   onPressed: () {
-      //     //     Navigator.pop(context);
-      //     //   },
-      //     // )
-      //     ),
+      body: Column(
+        children: [
+          Text(
+            prescDrug.name,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          buildForm(prescDrug),
+        ],
+      ),
     );
   }
 }

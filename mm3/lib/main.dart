@@ -29,6 +29,7 @@ import 'drug.dart';
 import 'dbHelper.dart';
 import 'ui/ql_page.dart';
 import 'ui/mv_page.dart';
+import 'prescription.dart';
 
 void main() {
   runApp(const MyApp());
