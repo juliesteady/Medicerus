@@ -38,7 +38,7 @@ class _MedviewPageState extends State<MedviewPage> {
     otcDrugs = userdbHelper.getOTCDrugs();
   }
 
-  Widget _prescWidget(Prescription presc) {
+  Widget _medication(Prescription presc) {
     Icon pinIcon = Icon(Icons.push_pin_outlined);
     if (presc.pinned != null && presc.pinned == true) {
       pinIcon = Icon(Icons.push_pin);
@@ -63,6 +63,7 @@ class _MedviewPageState extends State<MedviewPage> {
                 child: Text(
                   presc.name,
                   style: const TextStyle(
+                    fontWeight: FontWeight.bold,
                     color: Colors.black,
                     fontSize: 20,
                   ),
@@ -109,6 +110,7 @@ class _MedviewPageState extends State<MedviewPage> {
     );
   }
 
+/*
   Widget _medication(Prescription presc) {
     return Container(
       height: 150,
@@ -146,6 +148,8 @@ class _MedviewPageState extends State<MedviewPage> {
       ),
     );
   }
+
+  */
 
   @override
   Widget build(BuildContext context) {
