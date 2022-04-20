@@ -70,12 +70,12 @@ class _MedviewPageState extends State<MedviewPage> {
       pinIcon = Icon(Icons.push_pin);
     }
     return Container(
-      height: 150,
+      height: 100,
       width: double.infinity,
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(5),
+      margin: EdgeInsets.all(2),
+      padding: EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: CupertinoColors.lightBackgroundGray,
+        color: Colors.lightBlue[100],
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
@@ -83,7 +83,28 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(presc.name),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, bottom: 5, right: 5, top: 15),
+                child: Text(
+                  presc.name,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              const Padding(
+                padding:
+                    EdgeInsets.only(left: 10, bottom: 5, right: 5, top: 20),
+                child: Text(
+                  'Take 2 per day',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
             ]),
           ),
           Column(children: [
@@ -218,7 +239,7 @@ class _MedviewPageState extends State<MedviewPage> {
 
   _insertPrescription() async {
     Prescription testpresc = Prescription(
-      name: 'drug name',
+      name: 'Drug name',
       totalAmount: 30,
       unit: 'mg',
       daySupply: 30,
