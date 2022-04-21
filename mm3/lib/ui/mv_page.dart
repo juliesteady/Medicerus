@@ -11,6 +11,7 @@ import '../dbHelper.dart';
 import '../medlog.dart';
 import '../otcdrug.dart';
 import '../prescription.dart';
+import '../otcdrug.dart';
 import '../userDbHelper.dart';
 // import 'package:provider/provider.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
@@ -28,14 +29,14 @@ class MedviewPage extends StatefulWidget {
 class _MedviewPageState extends State<MedviewPage> {
   // final List<Widget> _medicationWidgets = [];
   late Future<List<Prescription>> prescriptions;
-  late Future<List<OTCDrug>> otcDrugs;
+  late Future<List<OTCDrug>> otcdrugs;
   final userdbHelper = UserDatabaseHelper.instance;
 
   @protected
   @mustCallSuper
   void initState() {
     prescriptions = userdbHelper.getPrescriptions();
-    otcDrugs = userdbHelper.getOTCDrugs();
+    otcdrugs = userdbHelper.getOTCDrugs();
   }
 
   Widget _medication(Prescription presc) {
@@ -111,7 +112,7 @@ class _MedviewPageState extends State<MedviewPage> {
   }
 
 /*
-  Widget _medication(Prescription presc) {
+  Widget _otcMedication(OTCDrug otcDrug) {
     return Container(
       height: 150,
       width: double.infinity,
@@ -126,22 +127,40 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                presc.name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                presc.totalAmount.toString(),
-              ),
-              Text(
-                presc.unit,
-              ),
-              Text(
-                presc.daySupply.toString(),
-              ),
-              Text(
-                presc.fillDate.toString(),
-              ),
+              Text(otcDrug.name),
+              Text(otcDrug.recAmount.toString()),
+              Text(otcDrug.unit),
+              Text(otcDrug.recTime.toString()),
+              Text(otcDrug.recTimeType),
+              Text(otcDrug.details!),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _prescMedication(Prescription presc) {
+    return Container(
+      height: 150,
+      width: double.infinity,
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: CupertinoColors.lightBackgroundGray,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(presc.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(presc.totalAmount.toString()),
+              Text(presc.unit),
+              Text(presc.daySupply.toString()),
+              Text(presc.fillDate.toString()),
             ]),
           ),
         ],
@@ -153,7 +172,6 @@ class _MedviewPageState extends State<MedviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    // prescriptions = userdbHelper.getPrescriptions();
     return Scaffold(
       appBar: AppBar(
         title: const Text('MedView'),
@@ -226,7 +244,7 @@ class _MedviewPageState extends State<MedviewPage> {
     );
     userdbHelper.insertOrUpdateOTCDrug(testotc);
     setState(() {
-      otcDrugs = userdbHelper.getOTCDrugs();
+      otcdrugs = userdbHelper.getOTCDrugs();
     });
   }
 

@@ -1,71 +1,33 @@
 import 'package:flutter/material.dart';
-
 import '../drug.dart';
 import '../otcdrug.dart';
 import '../userDbHelper.dart';
 
-class OTCFormPage extends StatelessWidget {
+class OTCFormPage extends StatefulWidget {
   const OTCFormPage({Key? key, this.drug}) : super(key: key);
   final Drug? drug;
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Over the Counter Medication'),
-      ),
-      body: Column(
-        children: [
-          Text(
-            drug!.proprietaryName,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const OTCForm(),
-        ],
-      ),
-    );
+  OTCFormPageState createState() {
+    return OTCFormPageState();
   }
 }
 
-class OTCForm extends StatefulWidget {
-  const OTCForm({Key? key}) : super(key: key);
-
-  @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
-  }
-}
-
-class MyCustomFormState extends State<OTCForm> {
+class OTCFormPageState extends State<OTCFormPage> {
   final _formKey = GlobalKey<FormState>();
-
   final amountController = TextEditingController();
-  final formController = TextEditingController();
   final timeController = TextEditingController();
   final timetypeController = TextEditingController();
   final detailsController = TextEditingController();
-
   final userdbHelper = UserDatabaseHelper.instance;
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    amountController.dispose();
-    formController.dispose();
-    timeController.dispose();
-    timetypeController.dispose();
-    detailsController.dispose();
-    super.dispose();
-  }
+  String dropdownValue = 'tablet';
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildForm(OTCDrug otcDrug) {
     return Form(
       key: _formKey,
       child: Container(
-          margin: const EdgeInsets.all(5),
+          margin: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -84,19 +46,25 @@ class MyCustomFormState extends State<OTCForm> {
                 },
               ),
               const SizedBox(height: 8.0),
-              TextFormField(
-                controller: formController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter the drug form',
+              const Text('Please choose a unit:'),
+              Container(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: DropdownButtonFormField<String>(
+                  value: dropdownValue,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  items: <String>['tablet', 'mg', 'mL', 'fl oz']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                    });
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the drug form';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 8.0),
               TextFormField(
@@ -140,30 +108,59 @@ class MyCustomFormState extends State<OTCForm> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Added Over the Counter Drug to Medview Tab')),
-                        );
-                        OTCDrug otcDrug = OTCDrug(
-                            name: 'presc drug name',
-                            recAmount: int.parse(amountController.text),
-                            unit: formController.text,
-                            recTime: int.parse(timeController.text),
-                            recTimeType: timetypeController.text,
-                            details: detailsController.text);
-                        userdbHelper.insertOrUpdateOTCDrug(otcDrug);
-                      }
-                    },
-                    child: const Text("Add Drug"),
-                  ),
-                ),
+                    child: ElevatedButton.icon(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Added Over the Counter Drug to Medview Tab')),
+                            );
+                            otcDrug.recAmount =
+                                int.parse(amountController.text);
+                            otcDrug.unit = dropdownValue;
+                            otcDrug.recTime = int.parse(timeController.text);
+                            otcDrug.recTimeType = timetypeController.text;
+                            otcDrug.details = detailsController.text;
+                            userdbHelper.insertOrUpdateOTCDrug(otcDrug);
+                          }
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Drug'))),
               ),
             ],
           )),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String drugName = widget.drug!.proprietaryName;
+    OTCDrug otcDrug = OTCDrug(
+        name: drugName,
+        recAmount: 0,
+        unit: '',
+        recTime: 0,
+        recTimeType: '',
+        details: '');
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add Over the Counter Medication'),
+      ),
+      resizeToAvoidBottomInset: false,
+      body: Column(
+        children: [
+          Text(
+            otcDrug.name,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          buildForm(otcDrug),
+        ],
+      ),
     );
   }
 }

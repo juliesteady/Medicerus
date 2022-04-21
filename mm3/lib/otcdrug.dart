@@ -21,12 +21,12 @@ class OTCDrugFields {
 
 class OTCDrug {
   final int? id;
-  final String name;
-  final int recAmount;
-  final String unit; //ml, tablets?
-  final int recTime; //amount of hours/days, etc.
-  final String recTimeType; //hours/days/weeks, etc.
-  final String? details;
+  String name;
+  int recAmount;
+  String unit; //ml, tablets?
+  int recTime; //amount of hours/days, etc.
+  String recTimeType; //hours/days/weeks, etc.
+  String? details;
   final String? substanceName; //multi-valued
 
   OTCDrug(
