@@ -229,110 +229,135 @@ class _MedviewPageState extends State<MedviewPage> {
           title: const Text('MedView'),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: FutureBuilder(
-                  future: prescriptions,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Prescription>> snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data!.isEmpty) {
-                        return Container(
-                            height: 450,
-                            child: const Text(
-                              'No current prescriptions.',
-                              style: TextStyle(fontSize: 20),
-                            ));
-                      }
-                      return ListView.builder(
-                          // itemCount: _medicationWidgets.length,
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return Dismissible(
-                              child: _prescMedication(snapshot.data![index]),
-                              key: UniqueKey(),
-                              onDismissed: (DismissDirection direction) {
-                                userdbHelper
-                                    .deletePrescription(snapshot.data![index]);
-                                setState(() {
-                                  // _medicationWidgets.removeAt(index);
-                                  prescriptions =
-                                      userdbHelper.getPrescriptions();
-                                });
-                              },
-                              secondaryBackground: Container(
-                                child: const Center(
-                                  child: Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                    ),
+        body: SingleChildScrollView(
+            child: Column(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.medication),
+              tileColor: Colors.grey[700],
+              title: Text(
+                'Prescriptions',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+            // Expanded(
+            FutureBuilder(
+                future: prescriptions,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<Prescription>> snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.isEmpty) {
+                      return Container(
+                          height: 450,
+                          child: const Text(
+                            'No current prescriptions.',
+                            style: TextStyle(fontSize: 20),
+                          ));
+                    }
+                    return ListView.builder(
+                        // itemCount: _medicationWidgets.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Dismissible(
+                            child: _prescMedication(snapshot.data![index]),
+                            key: UniqueKey(),
+                            onDismissed: (DismissDirection direction) {
+                              userdbHelper
+                                  .deletePrescription(snapshot.data![index]);
+                              setState(() {
+                                // _medicationWidgets.removeAt(index);
+                                prescriptions = userdbHelper.getPrescriptions();
+                              });
+                            },
+                            secondaryBackground: Container(
+                              child: const Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
                                   ),
                                 ),
-                                color: Colors.red,
                               ),
-                              background: Container(),
-                              direction: DismissDirection.endToStart,
-                            );
-                          });
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  }),
+                              color: Colors.red,
+                            ),
+                            background: Container(),
+                            direction: DismissDirection.endToStart,
+                          );
+                        });
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }),
+            // ),
+            // Expanded(
+            ListTile(
+              leading: Icon(Icons.medication),
+              tileColor: Colors.grey[700],
+              title: Text(
+                'Over the counter drugs',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
             ),
-            Expanded(
-              child: FutureBuilder(
-                  future: otcdrugs,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<OTCDrug>> snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data!.isEmpty) {
-                        return Container(
-                            height: 450,
-                            child: const Text(
-                              'No current over the counter drugs.',
-                              style: TextStyle(fontSize: 20),
-                            ));
-                      }
-                      return ListView.builder(
-                          // itemCount: _medicationWidgets.length,
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return Dismissible(
-                              child: _otcMedication(snapshot.data![index]),
-                              key: UniqueKey(),
-                              onDismissed: (DismissDirection direction) {
-                                userdbHelper
-                                    .deleteOTCDrug(snapshot.data![index]);
-                                setState(() {
-                                  // _medicationWidgets.removeAt(index);
-                                  otcdrugs = userdbHelper.getOTCDrugs();
-                                });
-                              },
-                              secondaryBackground: Container(
-                                child: const Center(
-                                  child: Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                    ),
+            FutureBuilder(
+                future: otcdrugs,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<OTCDrug>> snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.isEmpty) {
+                      return Container(
+                          height: 450,
+                          child: const Text(
+                            'No current over the counter drugs.',
+                            style: TextStyle(fontSize: 20),
+                          ));
+                    }
+                    return ListView.builder(
+                        // itemCount: _medicationWidgets.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Dismissible(
+                            child: _otcMedication(snapshot.data![index]),
+                            key: UniqueKey(),
+                            onDismissed: (DismissDirection direction) {
+                              userdbHelper.deleteOTCDrug(snapshot.data![index]);
+                              setState(() {
+                                // _medicationWidgets.removeAt(index);
+                                otcdrugs = userdbHelper.getOTCDrugs();
+                              });
+                            },
+                            secondaryBackground: Container(
+                              child: const Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
                                   ),
                                 ),
-                                color: Colors.red,
                               ),
-                              background: Container(),
-                              direction: DismissDirection.endToStart,
-                            );
-                          });
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  }),
-            ),
+                              color: Colors.red,
+                            ),
+                            background: Container(),
+                            direction: DismissDirection.endToStart,
+                          );
+                        });
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }),
+            // ),
           ],
-        ));
+        )));
   }
 }
