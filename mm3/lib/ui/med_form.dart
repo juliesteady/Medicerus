@@ -23,16 +23,6 @@ class MedFormPageState extends State<MedFormPage> {
 
   String dropdownValue = 'tablet';
 
-  // Clean up the controller when the widget is disposed.
-  @override
-  void dispose() {
-    amountController.dispose();
-    unitController.dispose();
-    daysupplyController.dispose();
-    filldateController.dispose();
-    super.dispose();
-  }
-
   Widget buildForm(Prescription presc) {
     return Form(
       key: _formKey,

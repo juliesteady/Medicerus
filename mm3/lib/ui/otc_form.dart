@@ -16,24 +16,12 @@ class OTCFormPage extends StatefulWidget {
 class OTCFormPageState extends State<OTCFormPage> {
   final _formKey = GlobalKey<FormState>();
   final amountController = TextEditingController();
-  final formController = TextEditingController();
   final timeController = TextEditingController();
   final timetypeController = TextEditingController();
   final detailsController = TextEditingController();
   final userdbHelper = UserDatabaseHelper.instance;
 
   String dropdownValue = 'tablet';
-
-  // Clean up the controller when the widget is disposed.
-  @override
-  void dispose() {
-    amountController.dispose();
-    formController.dispose();
-    timeController.dispose();
-    timetypeController.dispose();
-    detailsController.dispose();
-    super.dispose();
-  }
 
   Widget buildForm(OTCDrug otcDrug) {
     return Form(

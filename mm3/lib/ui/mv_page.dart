@@ -92,20 +92,8 @@ class _MedviewPageState extends State<MedviewPage> {
     );
   }
 
-  /*printOTC() async {
-    List<OTCDrug> tempotc = await otcdrugs;
-    tempotc.forEach((element) {
-      print(element.id.toString() + ' ' + element.name);
-    });
-  }*/
-
   @override
   Widget build(BuildContext context) {
-    // prescriptions = userdbHelper.getPrescriptions();
-    //printOTC();
-    print('getOTCDrugs(): ${userdbHelper.getOTCDrugs()}');
-    print('getPrescriptions(): ${userdbHelper.getPrescriptions()}');
-
     return Scaffold(
         appBar: AppBar(
           title: const Text('MedView'),
@@ -118,7 +106,6 @@ class _MedviewPageState extends State<MedviewPage> {
                   future: prescriptions,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Prescription>> snapshot) {
-                    print('PRESC SNAPSHOT DATA: ${snapshot.data}');
                     if (snapshot.hasData) {
                       if (snapshot.data!.isEmpty) {
                         return Container(
@@ -170,7 +157,6 @@ class _MedviewPageState extends State<MedviewPage> {
                   future: otcdrugs,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<OTCDrug>> snapshot) {
-                    print('OTC SNAPSHOT DATA: ${snapshot.data}');
                     if (snapshot.hasData) {
                       if (snapshot.data!.isEmpty) {
                         return Container(
