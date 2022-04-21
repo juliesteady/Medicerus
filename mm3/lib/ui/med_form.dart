@@ -74,12 +74,13 @@ class MedFormPageState extends State<MedFormPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               nameField,
+              const SizedBox(height: 8.0),
               TextFormField(
                 controller: amountController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter a usage amount',
+                  labelText: 'Enter the required dosage amount',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -89,7 +90,7 @@ class MedFormPageState extends State<MedFormPage> {
                 },
               ),
               const SizedBox(height: 8.0),
-              const Text('Please choose a unit:'),
+              const Text('Please choose the prescription unit:'),
               Container(
                 padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                 child: DropdownButtonFormField<String>(
@@ -115,7 +116,7 @@ class MedFormPageState extends State<MedFormPage> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter the days supplied',
+                  labelText: 'Enter the prescription supplied days',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -127,7 +128,7 @@ class MedFormPageState extends State<MedFormPage> {
               const SizedBox(height: 8.0),
               Center(
                   child: ElevatedButton(
-                child: const Text('Select Date'),
+                child: const Text('Select precsription fill date'),
                 onPressed: () => _selectDate(context),
               )),
               const SizedBox(height: 8.0),
@@ -136,7 +137,7 @@ class MedFormPageState extends State<MedFormPage> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter any warnings or details',
+                  labelText: 'Enter any warnings or details (optional)',
                 ),
               ),
               Padding(
