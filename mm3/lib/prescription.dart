@@ -15,7 +15,7 @@ class PrescriptionFields {
     pinned.toString(),
   ];
   static final int id = 0;
-  static final String name = 'name';
+  static String name = 'name';
   static final int totalAmount = 0;
   static final String unit = ''; //ml, tablets?
   static final int daySupply = 0;
@@ -31,7 +31,7 @@ class PrescriptionFields {
 
 class Prescription {
   final int? id;
-  final String name;
+  String name;
   int totalAmount;
   String unit; //ml, tablets?
   int daySupply;

@@ -15,6 +15,7 @@ class OTCFormPage extends StatefulWidget {
 
 class OTCFormPageState extends State<OTCFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
   final amountController = TextEditingController();
   final timeController = TextEditingController();
   final detailsController = TextEditingController();
@@ -22,7 +23,26 @@ class OTCFormPageState extends State<OTCFormPage> {
   String unitDropdown = 'tablet';
   String timetypeDropdown = 'hours';
 
-  Widget buildForm(OTCDrug otcDrug) {
+  Widget buildForm(OTCDrug otcDrug, bool nullDrug) {
+    Widget nameField;
+    if (nullDrug) {
+      nameField = TextFormField(
+        controller: nameController,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.all(20.0),
+          labelText: 'Name of drug',
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter a name';
+          }
+          return null;
+        },
+      );
+    } else {
+      nameField = Container();
+    }
     return Form(
       key: _formKey,
       child: Container(
@@ -30,6 +50,7 @@ class OTCFormPageState extends State<OTCFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              nameField,
               TextFormField(
                 controller: amountController,
                 decoration: const InputDecoration(
@@ -121,6 +142,9 @@ class OTCFormPageState extends State<OTCFormPage> {
                                   content: Text(
                                       'Added Over the Counter Drug to Medview Tab')),
                             );
+                            if (nullDrug) {
+                              otcDrug.name = nameController.text;
+                            }
                             otcDrug.recAmount =
                                 int.parse(amountController.text);
                             otcDrug.unit = unitDropdown;
@@ -140,14 +164,30 @@ class OTCFormPageState extends State<OTCFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    String drugName = widget.drug!.proprietaryName;
+    String drugName = '';
+    Widget nameWidget;
+    bool nullDrug = (widget.drug == null);
+    print(nullDrug);
+    if (nullDrug) {
+      nameWidget = Container();
+    } else {
+      drugName = widget.drug!.proprietaryName;
+      nameWidget = Text(
+        widget.drug!.proprietaryName,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }
     OTCDrug otcDrug = OTCDrug(
         name: drugName,
         recAmount: 0,
         unit: '',
         recTime: 0,
         recTimeType: '',
-        details: '');
+        details: '',
+        pinned: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -156,14 +196,8 @@ class OTCFormPageState extends State<OTCFormPage> {
       resizeToAvoidBottomInset: false,
       body: Column(
         children: [
-          Text(
-            otcDrug.name,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          buildForm(otcDrug),
+          nameWidget,
+          buildForm(otcDrug, nullDrug),
         ],
       ),
     );

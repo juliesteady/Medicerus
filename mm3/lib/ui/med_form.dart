@@ -15,6 +15,7 @@ class MedFormPage extends StatefulWidget {
 
 class MedFormPageState extends State<MedFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
   final amountController = TextEditingController();
   final unitController = TextEditingController();
   final daysupplyController = TextEditingController();
@@ -43,7 +44,26 @@ class MedFormPageState extends State<MedFormPage> {
     }
   }
 
-  Widget buildForm(Prescription presc) {
+  Widget buildForm(Prescription presc, bool nullDrug) {
+    Widget nameField;
+    if (nullDrug) {
+      nameField = TextFormField(
+        controller: nameController,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.all(20.0),
+          labelText: 'Name of drug',
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter a name';
+          }
+          return null;
+        },
+      );
+    } else {
+      nameField = Container();
+    }
     return Form(
       key: _formKey,
       child: Container(
@@ -51,6 +71,7 @@ class MedFormPageState extends State<MedFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              nameField,
               TextFormField(
                 controller: amountController,
                 decoration: const InputDecoration(
@@ -127,6 +148,9 @@ class MedFormPageState extends State<MedFormPage> {
                               content: Text(
                                   'Added Prescription Medication to Medview Tab')),
                         );
+                        if (nullDrug) {
+                          presc.name = nameController.text;
+                        }
                         presc.totalAmount = int.parse(amountController.text);
                         presc.unit = dropdownValue;
                         presc.daySupply = int.parse(daysupplyController.text);
@@ -147,6 +171,22 @@ class MedFormPageState extends State<MedFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    String drugName = '';
+    Widget nameWidget;
+    bool nullDrug = (widget.drug == null);
+    print(nullDrug);
+    if (nullDrug) {
+      nameWidget = Container();
+    } else {
+      drugName = widget.drug!.proprietaryName;
+      nameWidget = Text(
+        widget.drug!.proprietaryName,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }
     Prescription prescDrug = Prescription(
         name: widget.drug!.proprietaryName,
         totalAmount: 0,
@@ -163,14 +203,8 @@ class MedFormPageState extends State<MedFormPage> {
       resizeToAvoidBottomInset: false,
       body: Column(
         children: [
-          Text(
-            prescDrug.name,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          buildForm(prescDrug),
+          nameWidget,
+          buildForm(prescDrug, nullDrug),
         ],
       ),
     );
