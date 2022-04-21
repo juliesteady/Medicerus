@@ -146,7 +146,13 @@ class _DashboardPageState extends State<DashboardPage> {
                   ListTile(
                     tileColor: Colors.grey[700],
                     leading: Icon(Icons.medication),
-                    title: const Text('Recent Medications'),
+                    title: const Text(
+                      'Recent Medications',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
                   medDisplayLogged(),
                 ],
