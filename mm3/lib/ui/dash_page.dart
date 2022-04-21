@@ -114,8 +114,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 children: <Widget>[
                   ListTile(
                     leading: Icon(Icons.medication),
-                    tileColor: Colors.lightBlue.shade100,
-                    title: const Text('Current Medications'),
+                    tileColor: Colors.grey[700],
+                    title: const Text(
+                      'Current Medications',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
                   medDisplayCurrent()
                 ],
@@ -126,7 +132,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
                 children: <Widget>[
                   ListTile(
-                    tileColor: Colors.lightBlue.shade100,
+                    tileColor: Colors.grey[700],
                     leading: Icon(Icons.medication),
                     title: const Text('Recent Medications'),
                   ),
@@ -143,8 +149,14 @@ class _DashboardPageState extends State<DashboardPage> {
     if (numberPinned > 0) {
       pinnedTitle = ListTile(
         leading: Icon(Icons.medication),
-        tileColor: Colors.lightBlue.shade100,
-        title: const Text('Pinned Medications'),
+        tileColor: Colors.grey[700],
+        title: Text(
+          'Pinned Medications',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+          ),
+        ),
       );
     } else {
       pinnedTitle = Container();
@@ -293,7 +305,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget displayPrescription(Prescription presc, bool logged) {
     Widget checkbutton;
-    Color backColor = Colors.white;
+    Color backColor = Colors.lightBlue.shade100;
     if (logged) {
       backColor = Colors.grey.shade300;
       checkbutton = Container();
@@ -358,15 +370,16 @@ class _DashboardPageState extends State<DashboardPage> {
     if (presc.pinned != null && presc.pinned == true) {
       pinIcon = Icon(Icons.push_pin);
     }
-    Color backColor = Colors.white;
+    Color backColor = Colors.lightBlue.shade100;
     Widget logButton;
     if (logged) {
       backColor = Colors.grey.shade300;
       logButton = Container();
     } else {
-      logButton = SizedBox(
-        height: 30,
-        width: 30,
+      logButton = Container(
+        // SizedBox(
+        //   height: 30,
+        //   width: 30,
         child: IconButton(
             icon: const Icon(Icons.check),
             onPressed: () {
@@ -385,13 +398,32 @@ class _DashboardPageState extends State<DashboardPage> {
       return Container(
           color: backColor,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Container(
-                constraints: BoxConstraints(maxWidth: 25),
-                child: Icon(Icons.medication)),
             Column(children: [
               Container(
-                  width: 300,
-                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  padding: const EdgeInsets.only(
+                      left: 4, bottom: 4, right: 4, top: 4),
+                  //margin: EdgeInsets.all(2),
+                  //constraints: BoxConstraints(maxWidth: 25),
+                  //child: Icon(Icons.medication)),
+                  child: IconButton(
+                      icon: pinIcon,
+                      onPressed: () {
+                        presc.pinned = !presc.pinned;
+                        userdbHelper.insertOrUpdatePrescription(presc);
+                        setState(() {
+                          prescriptions = userdbHelper.getPrescriptions();
+                          pinnedLoggedPrescriptions =
+                              getPinnedLoggedPrescriptions();
+                          pinnedUnloggedPrescriptions =
+                              getPinnedUnloggedPrescriptions();
+                        });
+                      })),
+            ]),
+            Column(children: [
+              Container(
+                  //width: 300,
+                  padding: const EdgeInsets.only(
+                      left: 4, bottom: 4, right: 4, top: 4),
                   child: Text(
                     presc.name,
                     style: const TextStyle(
@@ -401,8 +433,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     textAlign: TextAlign.left,
                   )),
               Container(
-                  width: 300,
-                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  //width: 300,
+                  padding: const EdgeInsets.only(
+                      left: 4, bottom: 4, right: 4, top: 4),
                   child: Text(
                     (presc.totalAmount / presc.daySupply).toString() +
                         ' ' +
@@ -414,7 +447,10 @@ class _DashboardPageState extends State<DashboardPage> {
                     textAlign: TextAlign.left,
                   )),
             ]),
-            logButton,
+            Column(children: [
+              logButton,
+            ]),
+            /*
             SizedBox(
               height: 30,
               width: 30,
@@ -432,6 +468,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     });
                   }),
             ),
+            */
+            //logButton,
           ]));
     });
   }
