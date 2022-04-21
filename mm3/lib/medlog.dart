@@ -52,7 +52,7 @@ class MedLog {
         prescriptionstatus = true,
         prescid = presc.id,
         otcid = null,
-        amounttaken = presc.daySupply,
+        amounttaken = (presc.totalAmount ~/ presc.daySupply),
         unit = presc.unit,
         substanceName = presc.substanceName;
 }

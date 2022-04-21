@@ -167,7 +167,6 @@ class _HistoryLogPage extends State<HistoryLogPage> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // Container(constraints: BoxConstraints(maxWidth: 25), child: Icons.medIcon),
           Column(children: [
             Container(
                 width: 325,
@@ -179,7 +178,7 @@ class _HistoryLogPage extends State<HistoryLogPage> {
                     color: Colors.black,
                   ),
                   textAlign: TextAlign.left,
-                )), //),
+                )),
             Container(
                 width: 325,
                 padding: const EdgeInsets.symmetric(vertical: 2),
@@ -190,7 +189,7 @@ class _HistoryLogPage extends State<HistoryLogPage> {
                     color: Colors.grey[700],
                   ),
                   textAlign: TextAlign.left,
-                )), //),
+                )),
             Container(
                 width: 325,
                 padding: const EdgeInsets.symmetric(vertical: 2),
@@ -230,9 +229,5 @@ class _HistoryLogPage extends State<HistoryLogPage> {
         unit: 'mg',
         substanceName: 'acetaminophen');
     userdbHelper.insertOrUpdateMedLog(testlog);
-    //   Database db = await UserDatabaseHelper.instance.database;
-    //   db.execute(
-    //       '''INSERT INTO prescriptions (name, totalamount, unit, daysupply, rxnumber, filldate, expdate, details, substancename)
-    // VALUES ('Medicine Name', 60, 'mg', 2, 'rx number', '2022-04-11', '2022-05-11', 'take 2 a day', 'some substance');''');
   }
 }

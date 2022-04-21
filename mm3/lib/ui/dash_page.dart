@@ -22,12 +22,8 @@ import 'package:medicerus/prescription.dart';
 import 'package:medicerus/userDbHelper.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../medlog.dart';
 import '../otcdrug.dart';
-// import 'package:provider/provider.dart';
-// import 'package:flutter_slidable/flutter_slidable.dart';
-
-// import '../data/drift_database.dart';
-// import 'widget/add_rc_item_input_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -37,45 +33,67 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final userdbHelper = UserDatabaseHelper.instance;
   late Future<List<Prescription>> prescriptions;
-  late Future<List<Prescription>> pinnedPrescriptions;
+  late Future<List<Prescription>> pinnedLoggedPrescriptions;
+  late Future<List<Prescription>> pinnedUnloggedPrescriptions;
   late Future<List<Prescription>> loggedPrescriptions;
   late Future<List<Prescription>> unloggedPrescriptions;
   late Future<List<OTCDrug>> otcDrugs;
+  int numberPinned = 0;
 
   @protected
   @mustCallSuper
   void initState() {
     prescriptions = userdbHelper.getPrescriptions();
-    pinnedPrescriptions = userdbHelper.getPinnedPrescriptions();
     loggedPrescriptions = userdbHelper.getLoggedPrescriptions();
     unloggedPrescriptions = getUnloggedPrescriptions();
+    pinnedLoggedPrescriptions = getPinnedLoggedPrescriptions();
+    pinnedUnloggedPrescriptions = getPinnedUnloggedPrescriptions();
     otcDrugs = userdbHelper.getOTCDrugs();
+    getNumberPinned().then((value) {
+      if (value != null) {
+        setState(() {
+          numberPinned = value;
+        });
+        print('number pinned: ' + numberPinned.toString());
+      }
+    });
+  }
+
+  Future<int> getNumberPinned() async {
+    int unlogged = await pinnedUnloggedPrescriptions.then((value) {
+      return value.length;
+    });
+    int logged = await pinnedLoggedPrescriptions.then((value) {
+      return value.length;
+    });
+    return unlogged + logged;
+  }
+
+  Future<List<Prescription>> getPinnedLoggedPrescriptions() async {
+    List<Prescription> presc = await loggedPrescriptions;
+    List<Prescription> pinned =
+        presc.where((element) => element.pinned == true).toList();
+    return pinned;
+  }
+
+  Future<List<Prescription>> getPinnedUnloggedPrescriptions() async {
+    List<Prescription> presc = await unloggedPrescriptions;
+    List<Prescription> pinned =
+        presc.where((element) => element.pinned == true).toList();
+    return pinned;
   }
 
   Future<List<Prescription>> getUnloggedPrescriptions() async {
     List<Prescription> presc = await prescriptions;
-    print(presc);
     List<Prescription> logged = await loggedPrescriptions;
-    print(logged);
-    // List<Prescription> unlogged = [];
-    // presc.forEach((element) {
-    //   int? id = element.id;
-    //   if (id != null) {
-    //     bool shared = false;
-    //     logged.forEach((logElement) {
-    //       if (logElement.id == id) {
-    //         shared = true;
-    //       }
-    //     });
-    //     if (!shared) {
-    //       unlogged.add(element);
-    //     }
-    //   }
-    // });
     List<Prescription> unlogged =
         presc.toSet().difference(logged.toSet()).toList();
-    print(unlogged);
     return unlogged;
+  }
+
+  List<Prescription> getLoggedList() {
+    List<Prescription> logged = loggedPrescriptions as List<Prescription>;
+    return logged;
   }
 
   @override
@@ -97,9 +115,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ListTile(
                     leading: Icon(Icons.medication),
                     tileColor: Colors.lightBlue.shade100,
-                    //title: const Center( child:
                     title: const Text('Current Medications'),
-                    //)
                   ),
                   medDisplayCurrent()
                 ],
@@ -112,9 +128,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ListTile(
                     tileColor: Colors.lightBlue.shade100,
                     leading: Icon(Icons.medication),
-                    //title: const Center( child:
                     title: const Text('Recent Medications'),
-                    //)
                   ),
                   medDisplayLogged(),
                 ],
@@ -125,30 +139,55 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget medDisplayPinned() {
-    return FutureBuilder(
-        future: pinnedPrescriptions,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Prescription>> snapshot) {
-          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.medication),
-                  tileColor: Colors.lightBlue.shade100,
-                  //title: const Center( child:
-                  title: const Text('Pinned Medications'),
-                  //)
-                ),
-                pinnedListDisplay(snapshot),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        });
+    Widget pinnedTitle;
+    if (numberPinned > 0) {
+      pinnedTitle = ListTile(
+        leading: Icon(Icons.medication),
+        tileColor: Colors.lightBlue.shade100,
+        title: const Text('Pinned Medications'),
+      );
+    } else {
+      pinnedTitle = Container();
+    }
+    return Column(
+      children: [
+        pinnedTitle,
+        FutureBuilder(
+            future: pinnedUnloggedPrescriptions,
+            builder: (BuildContext context,
+                AsyncSnapshot<List<Prescription>> snapshot) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+                  children: <Widget>[
+                    pinnedListDisplay(snapshot, false),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            }),
+        FutureBuilder(
+            future: pinnedLoggedPrescriptions,
+            builder: (BuildContext context,
+                AsyncSnapshot<List<Prescription>> snapshot) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+                  children: <Widget>[
+                    pinnedListDisplay(snapshot, true),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            }),
+      ],
+    );
   }
 
   Widget medDisplayLogged() {
@@ -162,7 +201,7 @@ class _DashboardPageState extends State<DashboardPage> {
               shrinkWrap: true,
               padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               children: <Widget>[
-                pinnedListDisplay(snapshot),
+                medListDisplay(snapshot, true),
               ],
             );
           } else {
@@ -171,12 +210,11 @@ class _DashboardPageState extends State<DashboardPage> {
         });
   }
 
-  Widget pinnedListDisplay(AsyncSnapshot<List<Prescription>> presclist) {
+  Widget pinnedListDisplay(
+      AsyncSnapshot<List<Prescription>> presclist, bool logged) {
     int length = presclist.data!.length;
     return Container(
         child: Container(
-            // height:
-            //     450, //sets height for total list field, prevents overflowing
             child: ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.vertical, //allows list to be scrollable vertically
@@ -188,7 +226,36 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Container(
                 width: 50, //sets width for the text boxes
                 alignment: Alignment.centerLeft, //sets text aligned to the left
-                child: displayPrescription(presclist.data![position]),
+                child: displayPinnedPrescription(
+                    presclist.data![position], logged),
+                padding: const EdgeInsets.all(3.0),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+              ),
+              onTap: () {}),
+          color: Colors.transparent,
+        );
+      },
+    )));
+  }
+
+  Widget medListDisplay(
+      AsyncSnapshot<List<Prescription>> presclist, bool logged) {
+    int length = presclist.data!.length;
+    return Container(
+        child: Container(
+            child: ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical, //allows list to be scrollable vertically
+      shrinkWrap: true,
+      itemCount: length,
+      itemBuilder: (context, position) {
+        return Material(
+          child: InkWell(
+              child: Container(
+                width: 50, //sets width for the text boxes
+                alignment: Alignment.centerLeft, //sets text aligned to the left
+                child: displayPrescription(presclist.data![position], logged),
                 padding: const EdgeInsets.all(3.0),
                 decoration:
                     BoxDecoration(border: Border.all(color: Colors.blueAccent)),
@@ -203,7 +270,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget medDisplayCurrent() {
-    // Future<int> druglistlength = _setDrugListLength(drugs);
     return FutureBuilder(
       future: unloggedPrescriptions,
       builder:
@@ -217,7 +283,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   style: TextStyle(fontSize: 14),
                 ));
           }
-          return pinnedListDisplay(snapshot);
+          return medListDisplay(snapshot, false);
         } else {
           return Center(child: CircularProgressIndicator());
         }
@@ -225,73 +291,148 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // Widget prescriptionListDisplay(AsyncSnapshot<List<Prescription>> presclist) {
-  //   int length = presclist.data!.length;
-  //   int itemDisplayCount = 10;
-  //   return Expanded(
-  //       child: Container(
-  //           height:
-  //               450, //sets height for total list field, prevents overflowing
-  //           child: ListView.builder(
-  //             scrollDirection:
-  //                 Axis.vertical, //allows list to be scrollable vertically
-  //             shrinkWrap: true,
-  //             itemCount: length,
-  //             itemBuilder: (context, position) {
-  //               return Material(
-  //                 child: InkWell(
-  //                     child: Container(
-  //                       width: 50, //sets width for the text boxes
-  //                       alignment: Alignment
-  //                           .centerLeft, //sets text aligned to the left
-  //                       child: displayPrescription(presclist.data![position]),
-  //                       padding: const EdgeInsets.all(3.0),
-  //                       decoration: BoxDecoration(
-  //                           border: Border.all(color: Colors.blueAccent)),
-  //                     ),
-  //                     onTap: () {
-  //                       print(presclist.data![position].name);
-  //                     }),
-  //                 color: Colors.transparent,
-  //               );
-  //             },
-  //           )));
-  // }
-
-  Widget displayPrescription(Prescription presc) {
+  Widget displayPrescription(Prescription presc, bool logged) {
+    Widget checkbutton;
+    Color backColor = Colors.white;
+    if (logged) {
+      backColor = Colors.grey.shade300;
+      checkbutton = Container();
+    } else {
+      checkbutton = SizedBox(
+        height: 30,
+        width: 30,
+        child: IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              MedLog newlog = MedLog.withPresc(presc);
+              userdbHelper.insertOrUpdateMedLog(newlog);
+              setState(() {
+                loggedPrescriptions = userdbHelper.getLoggedPrescriptions();
+                unloggedPrescriptions = getUnloggedPrescriptions();
+                pinnedUnloggedPrescriptions = getPinnedUnloggedPrescriptions();
+                pinnedLoggedPrescriptions = getPinnedLoggedPrescriptions();
+              });
+            }),
+      );
+    }
     return Builder(builder: (BuildContext context) {
-      return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Container(
-            constraints: BoxConstraints(maxWidth: 25),
-            child: Icon(Icons.medication)),
-        Column(children: [
-          Container(
-              width: 325,
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(
-                presc.name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.left,
-              )), //),
-          Container(
-              width: 325,
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              //child: new Flexible(
-              child: Text(
-                (presc.totalAmount / presc.daySupply).toString() +
-                    ' ' +
-                    presc.unit,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
-                textAlign: TextAlign.left,
-              )),
-        ])
-      ]); //),
+      return Container(
+          color: backColor,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+                constraints: BoxConstraints(maxWidth: 25),
+                child: Icon(Icons.medication)),
+            Column(children: [
+              Container(
+                  width: 325,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    presc.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.left,
+                  )),
+              Container(
+                  width: 325,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    (presc.totalAmount / presc.daySupply).toString() +
+                        ' ' +
+                        presc.unit,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                    ),
+                    textAlign: TextAlign.left,
+                  )),
+            ]),
+            checkbutton
+          ]));
+    });
+  }
+
+  Widget displayPinnedPrescription(Prescription presc, bool logged) {
+    Icon pinIcon = Icon(Icons.push_pin_outlined);
+    if (presc.pinned != null && presc.pinned == true) {
+      pinIcon = Icon(Icons.push_pin);
+    }
+    Color backColor = Colors.white;
+    Widget logButton;
+    if (logged) {
+      backColor = Colors.grey.shade300;
+      logButton = Container();
+    } else {
+      logButton = SizedBox(
+        height: 30,
+        width: 30,
+        child: IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              MedLog newlog = MedLog.withPresc(presc);
+              userdbHelper.insertOrUpdateMedLog(newlog);
+              setState(() {
+                loggedPrescriptions = userdbHelper.getLoggedPrescriptions();
+                unloggedPrescriptions = getUnloggedPrescriptions();
+                pinnedLoggedPrescriptions = getPinnedLoggedPrescriptions();
+                pinnedUnloggedPrescriptions = getPinnedUnloggedPrescriptions();
+              });
+            }),
+      );
+    }
+    return Builder(builder: (BuildContext context) {
+      return Container(
+          color: backColor,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+                constraints: BoxConstraints(maxWidth: 25),
+                child: Icon(Icons.medication)),
+            Column(children: [
+              Container(
+                  width: 300,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    presc.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.left,
+                  )),
+              Container(
+                  width: 300,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    (presc.totalAmount / presc.daySupply).toString() +
+                        ' ' +
+                        presc.unit,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                    ),
+                    textAlign: TextAlign.left,
+                  )),
+            ]),
+            logButton,
+            SizedBox(
+              height: 30,
+              width: 30,
+              child: IconButton(
+                  icon: pinIcon,
+                  onPressed: () {
+                    presc.pinned = !presc.pinned;
+                    userdbHelper.insertOrUpdatePrescription(presc);
+                    setState(() {
+                      prescriptions = userdbHelper.getPrescriptions();
+                      pinnedLoggedPrescriptions =
+                          getPinnedLoggedPrescriptions();
+                      pinnedUnloggedPrescriptions =
+                          getPinnedUnloggedPrescriptions();
+                    });
+                  }),
+            ),
+          ]));
     });
   }
 }
