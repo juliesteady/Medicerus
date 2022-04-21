@@ -59,7 +59,7 @@ class UserDatabaseHelper {
         name TEXT NOT NULL,
         recamount INTEGER NOT NULL,
         unit TEXT NOT NULL,
-        rectime TEXT NOT NULL,
+        rectime INTEGER NOT NULL,
         rectimetype TEXT NOT NULL,
         details TEXT,
         substancename TEXT,
