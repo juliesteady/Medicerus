@@ -29,7 +29,7 @@ class MedviewPage extends StatefulWidget {
 class _MedviewPageState extends State<MedviewPage> {
   late Future<List<Prescription>> prescriptions;
   late Future<List<OTCDrug>> otcdrugs;
-  late List<Prescription> loggedPrescriptions;
+  List<Prescription> loggedPrescriptions = [];
   final userdbHelper = UserDatabaseHelper.instance;
 
   @protected
