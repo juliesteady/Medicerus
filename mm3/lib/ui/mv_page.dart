@@ -85,6 +85,7 @@ class _MedviewPageState extends State<MedviewPage> {
               Text(presc.unit),
               Text(presc.daySupply.toString()),
               Text(presc.fillDate.toString()),
+              Text(presc.details!),
             ]),
           ),
         ],
