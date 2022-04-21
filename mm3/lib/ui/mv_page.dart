@@ -44,7 +44,7 @@ class _MedviewPageState extends State<MedviewPage> {
       pinIcon = Icon(Icons.push_pin);
     }
     return Container(
-      height: 100,
+      height: 106,
       width: double.infinity,
       margin: const EdgeInsets.all(5),
       padding: const EdgeInsets.all(5),
@@ -122,7 +122,7 @@ class _MedviewPageState extends State<MedviewPage> {
       pinIcon = Icon(Icons.push_pin);
     }
     return Container(
-      height: 150,
+      height: 106,
       width: double.infinity,
       margin: const EdgeInsets.all(5),
       padding: const EdgeInsets.all(5),
