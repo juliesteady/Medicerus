@@ -29,6 +29,7 @@ class MedviewPage extends StatefulWidget {
 class _MedviewPageState extends State<MedviewPage> {
   late Future<List<Prescription>> prescriptions;
   late Future<List<OTCDrug>> otcdrugs;
+  late List<Prescription> loggedPrescriptions;
   final userdbHelper = UserDatabaseHelper.instance;
 
   @protected
@@ -36,6 +37,31 @@ class _MedviewPageState extends State<MedviewPage> {
   void initState() {
     prescriptions = userdbHelper.getPrescriptions();
     otcdrugs = userdbHelper.getOTCDrugs();
+    getLoggedPrescriptions().then((value) {
+      if (value != null) {
+        setState(() {
+          loggedPrescriptions = value;
+        });
+      }
+    });
+  }
+
+  setLoggedPrescriptions() {
+    getLoggedPrescriptions().then((value) {
+      if (value != null) {
+        setState(() {
+          loggedPrescriptions = value;
+        });
+      }
+    });
+  }
+
+  Future<List<Prescription>> getLoggedPrescriptions() async {
+    List<Prescription> logged =
+        await userdbHelper.getLoggedPrescriptions().then((value) {
+      return value;
+    });
+    return logged;
   }
 
   Widget _otcMedication(OTCDrug otcDrug) {
@@ -121,6 +147,22 @@ class _MedviewPageState extends State<MedviewPage> {
     if (presc.pinned != null && presc.pinned == true) {
       pinIcon = Icon(Icons.push_pin);
     }
+    Widget logbutton;
+    if (loggedPrescriptions.contains(presc)) {
+      logbutton = Container();
+    } else {
+      logbutton = IconButton(
+          icon: const Icon(Icons.check),
+          onPressed: () {
+            MedLog newlog = MedLog.withPresc(presc);
+            userdbHelper.insertOrUpdateMedLog(newlog);
+            // userdbHelper.insertOrUpdatePrescription(presc);
+            setState(() {
+              prescriptions = userdbHelper.getPrescriptions();
+              setLoggedPrescriptions();
+            });
+          });
+    }
     return Container(
       height: 106,
       width: double.infinity,
@@ -172,17 +214,7 @@ class _MedviewPageState extends State<MedviewPage> {
                       prescriptions = userdbHelper.getPrescriptions();
                     });
                   }),
-              IconButton(
-                  icon: const Icon(Icons.check),
-                  onPressed: () {
-                    MedLog newlog = MedLog.withPresc(presc);
-                    userdbHelper.insertOrUpdateMedLog(newlog);
-                    // userdbHelper.insertOrUpdatePrescription(presc);
-                    // setState(() {
-                    //   // _medicationWidgets.removeAt(index);
-                    //   prescriptions = userdbHelper.getPrescriptions();
-                    // });
-                  })
+              logbutton,
             ],
           )
         ],
