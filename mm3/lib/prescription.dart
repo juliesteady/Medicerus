@@ -32,12 +32,12 @@ class PrescriptionFields {
 class Prescription {
   final int? id;
   final String name;
-  final int totalAmount;
-  final String unit; //ml, tablets?
-  final int daySupply;
+  int totalAmount;
+  String unit; //ml, tablets?
+  int daySupply;
   // final int reqAmountPerDay;
   final String? rxNumber;
-  final DateTime fillDate;
+  DateTime fillDate;
   final DateTime? expDate;
   final String? details;
   final String? pharmPhoneNum;
