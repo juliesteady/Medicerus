@@ -53,12 +53,14 @@ class OTCFormPageState extends State<OTCFormPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               nameField,
+              const SizedBox(height: 8.0),
               TextFormField(
+                autofocus: true,
                 controller: amountController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter a usage amount',
+                  labelText: 'Enter the recommended dosage amount',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -68,7 +70,7 @@ class OTCFormPageState extends State<OTCFormPage> {
                 },
               ),
               const SizedBox(height: 8.0),
-              const Text('Please choose a unit:'),
+              const Text('Please choose the drug unit:'),
               Container(
                 padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                 child: DropdownButtonFormField<String>(
@@ -94,7 +96,7 @@ class OTCFormPageState extends State<OTCFormPage> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter the usage time',
+                  labelText: 'Enter the recommended interval time:',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -130,7 +132,7 @@ class OTCFormPageState extends State<OTCFormPage> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter any warnings or details',
+                  labelText: 'Enter any warnings or details (optional)',
                 ),
               ),
               Padding(
