@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import '../drug.dart';
 import '../medlog.dart';
 import '../userDbHelper.dart';
+import 'package:intl/intl.dart';
 
 class HistoryLogPage extends StatefulWidget {
   HistoryLogPage({
@@ -164,53 +165,65 @@ class _HistoryLogPage extends State<HistoryLogPage> {
     }
     return Builder(builder: (BuildContext context) {
       return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        //mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // Container(constraints: BoxConstraints(maxWidth: 25), child: Icons.medIcon),
+          Expanded(
+            child:
+                // Container(constraints: BoxConstraints(maxWidth: 25), child: Icons.medIcon),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  //width: 325,
+                  padding: const EdgeInsets.only(
+                      left: 5, bottom: 5, right: 5, top: 15),
+                  child: Text(
+                    log.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.left,
+                  )), //),
+              Container(
+                  //width: 325,
+                  padding: const EdgeInsets.only(
+                      left: 5, bottom: 5, right: 5, top: 5),
+                  child: Text(
+                    log.amounttaken.toString() + ' ' + log.unit,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                    textAlign: TextAlign.left,
+                  )),
+              Container(
+                  //width: 325,
+                  padding: const EdgeInsets.only(
+                      left: 5, bottom: 5, right: 5, top: 5),
+                  child: Text(
+                    substancename,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                    textAlign: TextAlign.left,
+                  ))
+            ]),
+          ),
           Column(children: [
             Container(
-                width: 325,
-                padding: const EdgeInsets.symmetric(vertical: 2),
+                //width: 325,
+                padding: const EdgeInsets.only(
+                    left: 10, bottom: 5, right: 5, top: 5),
                 child: Text(
-                  log.name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.left,
-                )), //),
-            Container(
-                width: 325,
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Text(
-                  log.timetaken,
+                  DateFormat.yMd()
+                      .add_jm()
+                      .format(DateTime.parse(log.timetaken)),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[700],
                   ),
-                  textAlign: TextAlign.left,
-                )), //),
-            Container(
-                width: 325,
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Text(
-                  log.amounttaken.toString() + ' ' + log.unit,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                  textAlign: TextAlign.left,
-                )),
-            Container(
-                width: 325,
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Text(
-                  substancename,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.right,
                 ))
           ]),
         ],
