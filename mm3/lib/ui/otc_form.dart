@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../drug.dart';
+import '../main.dart';
 import '../otcdrug.dart';
 import '../userDbHelper.dart';
+import 'mv_page.dart';
 
 class OTCFormPage extends StatefulWidget {
   const OTCFormPage({Key? key, this.drug}) : super(key: key);
@@ -152,6 +154,12 @@ class OTCFormPageState extends State<OTCFormPage> {
                             otcDrug.recTimeType = timetypeDropdown;
                             otcDrug.details = detailsController.text;
                             userdbHelper.insertOrUpdateOTCDrug(otcDrug);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        MyHomePage(selectedPage: 1)),
+                                (route) => false);
                           }
                         },
                         icon: const Icon(Icons.add),

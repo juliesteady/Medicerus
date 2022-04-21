@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../drug.dart';
+import '../main.dart';
 import '../prescription.dart';
 import '../userDbHelper.dart';
+import 'mv_page.dart';
 
 class MedFormPage extends StatefulWidget {
   const MedFormPage({Key? key, this.drug}) : super(key: key);
@@ -157,6 +159,12 @@ class MedFormPageState extends State<MedFormPage> {
                         presc.fillDate = selectedDate;
                         presc.details = detailsController.text;
                         userdbHelper.insertOrUpdatePrescription(presc);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    MyHomePage(selectedPage: 1)),
+                            (route) => false);
                       }
                     },
                     icon: const Icon(Icons.add),
