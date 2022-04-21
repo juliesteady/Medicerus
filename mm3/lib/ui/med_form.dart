@@ -18,10 +18,30 @@ class MedFormPageState extends State<MedFormPage> {
   final amountController = TextEditingController();
   final unitController = TextEditingController();
   final daysupplyController = TextEditingController();
-  final filldateController = TextEditingController();
+  final detailsController = TextEditingController();
   final userdbHelper = UserDatabaseHelper.instance;
-
   String dropdownValue = 'tablet';
+  DateTime selectedDate = DateTime.now();
+
+  _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2050),
+      helpText: 'Enter the date the prescription was filled',
+      fieldLabelText: 'Date Prescription Filled',
+      fieldHintText: 'MM/DD/YYYY',
+      errorFormatText: 'Enter valid date',
+      errorInvalidText: 'Enter date in valid range',
+      initialEntryMode: DatePickerEntryMode.input,
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
 
   Widget buildForm(Prescription presc) {
     return Form(
@@ -82,19 +102,19 @@ class MedFormPageState extends State<MedFormPage> {
                 },
               ),
               const SizedBox(height: 8.0),
+              Center(
+                  child: ElevatedButton(
+                child: const Text('Select Date'),
+                onPressed: () => _selectDate(context),
+              )),
+              const SizedBox(height: 8.0),
               TextFormField(
-                controller: filldateController,
+                controller: detailsController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter the fill date',
+                  labelText: 'Enter any warnings or details',
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a date';
-                  }
-                  return null;
-                },
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -110,8 +130,8 @@ class MedFormPageState extends State<MedFormPage> {
                         presc.totalAmount = int.parse(amountController.text);
                         presc.unit = dropdownValue;
                         presc.daySupply = int.parse(daysupplyController.text);
-                        presc.fillDate =
-                            DateTime.parse(filldateController.text);
+                        presc.fillDate = selectedDate;
+                        presc.details = detailsController.text;
                         userdbHelper.insertOrUpdatePrescription(presc);
                       }
                     },
@@ -127,13 +147,13 @@ class MedFormPageState extends State<MedFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    String drugName = widget.drug!.proprietaryName;
     Prescription prescDrug = Prescription(
-        name: drugName,
+        name: widget.drug!.proprietaryName,
         totalAmount: 0,
         unit: '',
         daySupply: 0,
         fillDate: DateTime.now(),
+        details: '',
         pinned: false);
 
     return Scaffold(

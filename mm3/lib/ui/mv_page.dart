@@ -39,7 +39,7 @@ class _MedviewPageState extends State<MedviewPage> {
     otcdrugs = userdbHelper.getOTCDrugs();
   }
 
-  Widget _medication(Prescription presc) {
+  Widget _prescMedication(Prescription presc) {
     Icon pinIcon = Icon(Icons.push_pin_outlined);
     if (presc.pinned != null && presc.pinned == true) {
       pinIcon = Icon(Icons.push_pin);
@@ -164,7 +164,7 @@ class _MedviewPageState extends State<MedviewPage> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Dismissible(
-                      child: _medication(snapshot.data![index]),
+                      child: _prescMedication(snapshot.data![index]),
                       key: UniqueKey(),
                       onDismissed: (DismissDirection direction) {
                         userdbHelper.deletePrescription(snapshot.data![index]);

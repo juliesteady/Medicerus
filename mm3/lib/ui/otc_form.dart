@@ -17,11 +17,10 @@ class OTCFormPageState extends State<OTCFormPage> {
   final _formKey = GlobalKey<FormState>();
   final amountController = TextEditingController();
   final timeController = TextEditingController();
-  final timetypeController = TextEditingController();
   final detailsController = TextEditingController();
   final userdbHelper = UserDatabaseHelper.instance;
-
-  String dropdownValue = 'tablet';
+  String unitDropdown = 'tablet';
+  String timetypeDropdown = 'hours';
 
   Widget buildForm(OTCDrug otcDrug) {
     return Form(
@@ -50,7 +49,7 @@ class OTCFormPageState extends State<OTCFormPage> {
               Container(
                 padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                 child: DropdownButtonFormField<String>(
-                  value: dropdownValue,
+                  value: unitDropdown,
                   icon: const Icon(Icons.arrow_drop_down),
                   items: <String>['tablet', 'mg', 'mL', 'fl oz']
                       .map<DropdownMenuItem<String>>((String value) {
@@ -61,7 +60,7 @@ class OTCFormPageState extends State<OTCFormPage> {
                   }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      dropdownValue = newValue!;
+                      unitDropdown = newValue!;
                     });
                   },
                 ),
@@ -82,19 +81,25 @@ class OTCFormPageState extends State<OTCFormPage> {
                 },
               ),
               const SizedBox(height: 8.0),
-              TextFormField(
-                controller: timetypeController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.all(20.0),
-                  labelText: 'Enter the time type',
+              const Text('Please choose a time type:'),
+              Container(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: DropdownButtonFormField<String>(
+                  value: timetypeDropdown,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  items: <String>['hours', 'days']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      timetypeDropdown = newValue!;
+                    });
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a time type';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 8.0),
               TextFormField(
@@ -118,15 +123,15 @@ class OTCFormPageState extends State<OTCFormPage> {
                             );
                             otcDrug.recAmount =
                                 int.parse(amountController.text);
-                            otcDrug.unit = dropdownValue;
+                            otcDrug.unit = unitDropdown;
                             otcDrug.recTime = int.parse(timeController.text);
-                            otcDrug.recTimeType = timetypeController.text;
+                            otcDrug.recTimeType = timetypeDropdown;
                             otcDrug.details = detailsController.text;
                             userdbHelper.insertOrUpdateOTCDrug(otcDrug);
                           }
                         },
                         icon: const Icon(Icons.add),
-                        label: const Text('Add Drug'))),
+                        label: const Text('Add Over the Counter Drug'))),
               ),
             ],
           )),

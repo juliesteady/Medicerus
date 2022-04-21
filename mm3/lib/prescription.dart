@@ -39,7 +39,7 @@ class Prescription {
   final String? rxNumber;
   DateTime fillDate;
   final DateTime? expDate;
-  final String? details;
+  String? details;
   final String? pharmPhoneNum;
   final String? substanceName; //multi-valued
   bool pinned;
