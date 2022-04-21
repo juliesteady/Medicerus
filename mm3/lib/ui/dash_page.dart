@@ -38,6 +38,7 @@ class _DashboardPageState extends State<DashboardPage> {
   late Future<List<Prescription>> loggedPrescriptions;
   late Future<List<Prescription>> unloggedPrescriptions;
   late Future<List<OTCDrug>> otcDrugs;
+  late Future<List<OTCDrug>> pinnedOTCDrugs;
   int numberPinned = 0;
 
   @protected
@@ -49,6 +50,7 @@ class _DashboardPageState extends State<DashboardPage> {
     pinnedLoggedPrescriptions = getPinnedLoggedPrescriptions();
     pinnedUnloggedPrescriptions = getPinnedUnloggedPrescriptions();
     otcDrugs = userdbHelper.getOTCDrugs();
+    pinnedOTCDrugs = userdbHelper.getPinnedOTCDrugs();
     getNumberPinned().then((value) {
       if (value != null) {
         setState(() {
@@ -59,6 +61,13 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
+  setNumberPinned() async {
+    int pinned = await getNumberPinned();
+    setState(() {
+      numberPinned = pinned;
+    });
+  }
+
   Future<int> getNumberPinned() async {
     int unlogged = await pinnedUnloggedPrescriptions.then((value) {
       return value.length;
@@ -66,7 +75,10 @@ class _DashboardPageState extends State<DashboardPage> {
     int logged = await pinnedLoggedPrescriptions.then((value) {
       return value.length;
     });
-    return unlogged + logged;
+    int pinnedotc = await pinnedOTCDrugs.then((value) {
+      return value.length;
+    });
+    return unlogged + logged + pinnedotc;
   }
 
   Future<List<Prescription>> getPinnedLoggedPrescriptions() async {
@@ -186,6 +198,23 @@ class _DashboardPageState extends State<DashboardPage> {
                 return Container();
               }
             }),
+        FutureBuilder(
+            future: pinnedOTCDrugs,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<OTCDrug>> snapshot) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return ListView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+                  children: <Widget>[
+                    pinnedOTCListDisplay(snapshot),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            }),
       ],
     );
   }
@@ -228,6 +257,33 @@ class _DashboardPageState extends State<DashboardPage> {
                 alignment: Alignment.centerLeft, //sets text aligned to the left
                 child: displayPinnedPrescription(
                     presclist.data![position], logged),
+                padding: const EdgeInsets.all(3.0),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+              ),
+              onTap: () {}),
+          color: Colors.transparent,
+        );
+      },
+    )));
+  }
+
+  Widget pinnedOTCListDisplay(AsyncSnapshot<List<OTCDrug>> otclist) {
+    int length = otclist.data!.length;
+    return Container(
+        child: Container(
+            child: ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical, //allows list to be scrollable vertically
+      shrinkWrap: true,
+      itemCount: length,
+      itemBuilder: (context, position) {
+        return Material(
+          child: InkWell(
+              child: Container(
+                width: 50, //sets width for the text boxes
+                alignment: Alignment.centerLeft, //sets text aligned to the left
+                child: displayPinnedOTC(otclist.data![position]),
                 padding: const EdgeInsets.all(3.0),
                 decoration:
                     BoxDecoration(border: Border.all(color: Colors.blueAccent)),
@@ -429,10 +485,77 @@ class _DashboardPageState extends State<DashboardPage> {
                           getPinnedLoggedPrescriptions();
                       pinnedUnloggedPrescriptions =
                           getPinnedUnloggedPrescriptions();
+                      setNumberPinned();
                     });
                   }),
             ),
           ]));
+    });
+  }
+
+  Widget displayPinnedOTC(OTCDrug otc) {
+    Icon pinIcon = Icon(Icons.push_pin_outlined);
+    if (otc.pinned != null && otc.pinned == true) {
+      pinIcon = Icon(Icons.push_pin);
+    }
+    return Builder(builder: (BuildContext context) {
+      return Container(
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Container(
+            constraints: BoxConstraints(maxWidth: 25),
+            child: Icon(Icons.medication)),
+        Column(children: [
+          Container(
+              width: 300,
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                otc.name,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.left,
+              )),
+          Container(
+              width: 300,
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                (otc.recAmount).toString() + ' ' + otc.unit,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                ),
+                textAlign: TextAlign.left,
+              )),
+        ]),
+        SizedBox(
+          height: 30,
+          width: 30,
+          child: IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () {
+                MedLog newlog = MedLog.withOTC(otc);
+                userdbHelper.insertOrUpdateMedLog(newlog);
+                setState(() {
+                  otcDrugs = userdbHelper.getOTCDrugs();
+                });
+              }),
+        ),
+        SizedBox(
+          height: 30,
+          width: 30,
+          child: IconButton(
+              icon: pinIcon,
+              onPressed: () {
+                otc.pinned = !otc.pinned;
+                userdbHelper.insertOrUpdateOTCDrug(otc);
+                setState(() {
+                  pinnedOTCDrugs = userdbHelper.getPinnedOTCDrugs();
+                  setNumberPinned();
+                });
+              }),
+        ),
+      ]));
     });
   }
 }

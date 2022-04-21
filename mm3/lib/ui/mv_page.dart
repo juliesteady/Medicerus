@@ -38,6 +38,10 @@ class _MedviewPageState extends State<MedviewPage> {
   }
 
   Widget _otcMedication(OTCDrug otcDrug) {
+    Icon pinIcon = Icon(Icons.push_pin_outlined);
+    if (otcDrug.pinned != null && otcDrug.pinned == true) {
+      pinIcon = Icon(Icons.push_pin);
+    }
     return Container(
       height: 150,
       width: double.infinity,
@@ -61,6 +65,17 @@ class _MedviewPageState extends State<MedviewPage> {
             ]),
           ),
           Column(children: [
+            IconButton(
+                icon: pinIcon,
+                onPressed: () {
+                  otcDrug.pinned = !otcDrug.pinned;
+                  userdbHelper.insertOrUpdateOTCDrug(otcDrug);
+                  setState(() {
+                    // _medicationWidgets.removeAt(index);
+                    // prescriptions = userdbHelper.getPrescriptions();
+                    otcdrugs = userdbHelper.getOTCDrugs();
+                  });
+                }),
             IconButton(
                 icon: const Icon(Icons.check),
                 onPressed: () {
@@ -102,7 +117,7 @@ class _MedviewPageState extends State<MedviewPage> {
               Text(presc.totalAmount.toString()),
               Text(presc.unit),
               Text(presc.daySupply.toString()),
-              Text(presc.fillDate.toString()),
+              //Text(presc.fillDate.toString()),
             ]),
           ),
           Column(

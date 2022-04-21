@@ -142,7 +142,8 @@ class OTCFormPageState extends State<OTCFormPage> {
         unit: '',
         recTime: 0,
         recTimeType: '',
-        details: '');
+        details: '',
+        pinned: false);
 
     return Scaffold(
       appBar: AppBar(

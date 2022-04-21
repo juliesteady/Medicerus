@@ -125,6 +125,24 @@ class UserDatabaseHelper {
     });
   }
 
+  Future<List<OTCDrug>> getPinnedOTCDrugs() async {
+    final db = await instance.database;
+    List<Map<String, dynamic>> otclist =
+        await db.rawQuery('SELECT * from otcdrugs WHERE pinned = 1');
+    return List.generate(otclist.length, (i) {
+      return OTCDrug(
+          id: otclist[i]['id'],
+          name: otclist[i]['name'],
+          unit: otclist[i]['unit'],
+          details: otclist[i]['details'],
+          substanceName: otclist[i]['substancename'],
+          recAmount: otclist[i]['recamount'],
+          recTime: otclist[i]['rectime'],
+          recTimeType: otclist[i]['rectimetype'],
+          pinned: otclist[i]['pinned'] == 0 ? false : true);
+    });
+  }
+
   Future<List<Prescription>> getLoggedPrescriptions() async {
     final db = await instance.database;
     List<Map<String, dynamic>> presclist = await db.rawQuery(
@@ -159,7 +177,8 @@ class UserDatabaseHelper {
           recTime: otclist[i]['rectime'],
           recTimeType: otclist[i]['rectimetype'],
           details: otclist[i]['details'],
-          substanceName: otclist[i]['substance']);
+          substanceName: otclist[i]['substance'],
+          pinned: otclist[i]['pinned'] == 0 ? false : true);
     });
   }
 
@@ -243,6 +262,7 @@ class UserDatabaseHelper {
       'rectimetype': otc.recTimeType,
       'details': otc.details,
       'substancename': otc.substanceName,
+      'pinned': otc.pinned
     };
     if (otc.id != null) {
       int updateCount = await db
