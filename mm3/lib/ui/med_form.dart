@@ -196,7 +196,7 @@ class MedFormPageState extends State<MedFormPage> {
       );
     }
     Prescription prescDrug = Prescription(
-        name: widget.drug!.proprietaryName,
+        name: drugName,
         totalAmount: 0,
         unit: '',
         daySupply: 0,
