@@ -59,7 +59,7 @@ class UserDatabaseHelper {
         name TEXT NOT NULL,
         recamount INTEGER NOT NULL,
         unit TEXT NOT NULL,
-        rectime TEXT NOT NULL,
+        rectime INTEGER NOT NULL,
         rectimetype TEXT NOT NULL,
         details TEXT,
         substancename TEXT,
@@ -94,7 +94,6 @@ class UserDatabaseHelper {
           totalAmount: presclist[i]['totalamount'],
           unit: presclist[i]['unit'],
           daySupply: presclist[i]['daysupply'],
-          // reqAmountPerDay: presclist[i]['reqamountperday'],
           fillDate: DateTime.parse(presclist[i]['filldate']),
           rxNumber: presclist[i]['rxnumber'],
           expDate: DateTime.tryParse(presclist[i]['expdate']),
@@ -116,7 +115,27 @@ class UserDatabaseHelper {
           totalAmount: presclist[i]['totalamount'],
           unit: presclist[i]['unit'],
           daySupply: presclist[i]['daysupply'],
-          // reqAmountPerDay: presclist[i]['reqamountperday'],
+          fillDate: DateTime.parse(presclist[i]['filldate']),
+          rxNumber: presclist[i]['rxnumber'],
+          expDate: DateTime.tryParse(presclist[i]['expdate']),
+          details: presclist[i]['details'],
+          pharmPhoneNum: presclist[i]['pharmphonenum'],
+          substanceName: presclist[i]['substancename'],
+          pinned: presclist[i]['pinned'] == 0 ? false : true);
+    });
+  }
+
+  Future<List<Prescription>> getLoggedPrescriptions() async {
+    final db = await instance.database;
+    List<Map<String, dynamic>> presclist = await db.rawQuery(
+        'SELECT * from prescriptions, medlog WHERE medlog.prescid = prescriptions.id AND DATE(datetime(medlog.timetaken)) = DATE(\'now\', \'localtime\')'); //where NO instance of medlog WHERE medlog.prescid = prescription.id and timetaken > last midnight
+    return List.generate(presclist.length, (i) {
+      return Prescription(
+          id: presclist[i]['prescid'],
+          name: presclist[i]['name'],
+          totalAmount: presclist[i]['totalamount'],
+          unit: presclist[i]['unit'],
+          daySupply: presclist[i]['daysupply'],
           fillDate: DateTime.parse(presclist[i]['filldate']),
           rxNumber: presclist[i]['rxnumber'],
           expDate: DateTime.tryParse(presclist[i]['expdate']),
@@ -146,9 +165,8 @@ class UserDatabaseHelper {
 
   Future<List<MedLog>> getMedLog() async {
     final db = await instance.database;
-    // print(await db.query("sqlite_master"));
     List<Map<String, dynamic>> medloglist =
-        await db.rawQuery('SELECT * from medlog');
+        await db.rawQuery('SELECT * from medlog ORDER BY timetaken DESC;');
 
     return List.generate(medloglist.length, (i) {
       return MedLog(
@@ -174,7 +192,7 @@ class UserDatabaseHelper {
             search +
             '%\") OR LOWER(substancename) like LOWER(\"%' +
             search +
-            '%\")');
+            '%\") ORDER BY timetaken DESC');
     return List.generate(medloglist.length, (i) {
       return MedLog(
           id: medloglist[i]['id'],
@@ -204,7 +222,7 @@ class UserDatabaseHelper {
       'details': presc.details,
       'pharmphonenum': presc.pharmPhoneNum,
       'substancename': presc.substanceName,
-      'pinned': presc.pinned
+      'pinned': presc.pinned ? 1 : 0
     };
     if (presc.id != null) {
       int updateCount = await db
@@ -212,7 +230,6 @@ class UserDatabaseHelper {
     } else {
       int id = await db.insert('prescriptions', row);
     }
-    // print(await db.query('prescriptions'));
   }
 
   insertOrUpdateOTCDrug(OTCDrug otc) async {
@@ -225,7 +242,7 @@ class UserDatabaseHelper {
       'rectime': otc.recTime,
       'rectimetype': otc.recTimeType,
       'details': otc.details,
-      'substancename': otc.substanceName
+      'substancename': otc.substanceName,
     };
     if (otc.id != null) {
       int updateCount = await db
@@ -233,7 +250,6 @@ class UserDatabaseHelper {
     } else {
       int id = await db.insert('otcdrugs', row);
     }
-    // print(await db.query('otcdrugs'));
   }
 
   insertOrUpdateMedLog(MedLog medlog) async {

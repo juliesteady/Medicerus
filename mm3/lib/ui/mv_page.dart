@@ -231,13 +231,24 @@ class _MedviewPageState extends State<MedviewPage> {
   }
 
   _insertPrescription() async {
-    Prescription testpresc = Prescription(
-      name: 'Drug name',
-      totalAmount: 30,
-      unit: 'mg',
-      daySupply: 30,
-      fillDate: DateTime.parse('2022-04-11'),
-      pinned: false,
-    );
+    for (int i = 1; i < 14; i++) {
+      Prescription testpresc = Prescription(
+        name: 'Drug name ' + i.toString(),
+        totalAmount: 30,
+        unit: 'mg',
+        daySupply: 30,
+        fillDate: DateTime.parse('2022-04-11'),
+        pinned: false,
+      );
+      userdbHelper.insertOrUpdatePrescription(testpresc);
+    }
+
+    setState(() {
+      prescriptions = userdbHelper.getPrescriptions();
+    });
+    //   Database db = await UserDatabaseHelper.instance.database;
+    //   db.execute(
+    //       '''INSERT INTO prescriptions (name, totalamount, unit, daysupply, rxnumber, filldate, expdate, details, substancename)
+    // VALUES ('Medicine Name', 60, 'mg', 2, 'rx number', '2022-04-11', '2022-05-11', 'take 2 a day', 'some substance');''');
   }
 }

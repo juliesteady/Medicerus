@@ -91,6 +91,7 @@ class _HistoryLogPage extends State<HistoryLogPage> {
                   FocusManager.instance.primaryFocus?.unfocus();
                   setState(() {
                     searchQuery = searchQuery;
+                    loglist = userdbHelper.searchMedLog(searchQuery);
                   });
                 },
               )
@@ -242,9 +243,5 @@ class _HistoryLogPage extends State<HistoryLogPage> {
         unit: 'mg',
         substanceName: 'acetaminophen');
     userdbHelper.insertOrUpdateMedLog(testlog);
-    //   Database db = await UserDatabaseHelper.instance.database;
-    //   db.execute(
-    //       '''INSERT INTO prescriptions (name, totalamount, unit, daysupply, rxnumber, filldate, expdate, details, substancename)
-    // VALUES ('Medicine Name', 60, 'mg', 2, 'rx number', '2022-04-11', '2022-05-11', 'take 2 a day', 'some substance');''');
   }
 }
