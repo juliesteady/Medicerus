@@ -49,7 +49,7 @@ class _MedviewPageState extends State<MedviewPage> {
       margin: const EdgeInsets.all(5),
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: CupertinoColors.lightBackgroundGray,
+        color: Colors.lightBlue[100],
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
@@ -57,14 +57,36 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(otcDrug.name),
-              Text(otcDrug.recAmount.toString()),
-              Text(otcDrug.unit),
-              Text(otcDrug.recTime.toString()),
-              Text(otcDrug.recTimeType),
-              Text(otcDrug.details!),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, bottom: 5, right: 5, top: 15),
+                child: Text(
+                  otcDrug.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 10, bottom: 5, right: 5, top: 20),
+                child: Text(
+                  "Amount Limit: ${otcDrug.recAmount.toString()} ${otcDrug.unit} Time Limit: ${otcDrug.recTime.toString()} per ${otcDrug.recTimeType}",
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
             ]),
           ),
+
+          //Text(otcDrug.recTime.toString()),
+          //           Text(otcDrug.recTimeType),
+          //         Text(otcDrug.details!),
+
           Column(children: [
             IconButton(
                 icon: pinIcon,
@@ -105,7 +127,7 @@ class _MedviewPageState extends State<MedviewPage> {
       margin: const EdgeInsets.all(5),
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: CupertinoColors.lightBackgroundGray,
+        color: Colors.lightBlue[100],
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
@@ -113,12 +135,29 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(presc.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(presc.totalAmount.toString()),
-              Text(presc.unit),
-              Text(presc.daySupply.toString()),
-              //Text(presc.fillDate.toString()),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, bottom: 5, right: 5, top: 15),
+                child: Text(
+                  presc.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 10, bottom: 5, right: 5, top: 20),
+                child: Text(
+                  "Take ${presc.totalAmount.toString()} ${presc.unit} per day",
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
             ]),
           ),
           Column(
