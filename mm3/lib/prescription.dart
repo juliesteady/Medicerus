@@ -12,9 +12,10 @@ class PrescriptionFields {
     details,
     pharmPhoneNum,
     substanceName,
+    pinned.toString(),
   ];
   static final int id = 0;
-  static final String name = 'name';
+  static String name = 'name';
   static final int totalAmount = 0;
   static final String unit = ''; //ml, tablets?
   static final int daySupply = 0;
@@ -25,23 +26,25 @@ class PrescriptionFields {
   static final String? details = '';
   static final String? pharmPhoneNum = '';
   static final String? substanceName = 'SubstanceName'; //multi-valued
+  static final bool pinned = false;
 }
 
 class Prescription {
   final int? id;
-  final String name;
-  final int totalAmount;
-  final String unit; //ml, tablets?
-  final int daySupply;
+  String name;
+  int totalAmount;
+  String unit; //ml, tablets?
+  int daySupply;
   // final int reqAmountPerDay;
   final String? rxNumber;
-  final DateTime fillDate;
+  DateTime fillDate;
   final DateTime? expDate;
-  final String? details;
+  String? details;
   final String? pharmPhoneNum;
   final String? substanceName; //multi-valued
+  bool pinned;
 
-  const Prescription({
+  Prescription({
     this.id,
     required this.name,
     required this.totalAmount,
@@ -54,7 +57,13 @@ class Prescription {
     this.details,
     this.pharmPhoneNum,
     this.substanceName,
+    required this.pinned,
   });
+  @override
+  operator ==(other) => other is Prescription && other.id == id;
+
+  @override
+  int get hashCode => (id != null) ? id! : 0;
 }
 
 // enum frequency {

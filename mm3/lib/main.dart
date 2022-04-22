@@ -19,6 +19,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:medicerus/ui/dash_page.dart';
+import 'package:medicerus/ui/history_log.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart';
@@ -28,6 +29,7 @@ import 'drug.dart';
 import 'dbHelper.dart';
 import 'ui/ql_page.dart';
 import 'ui/mv_page.dart';
+import 'prescription.dart';
 
 void main() {
   runApp(const MyApp());
@@ -53,13 +55,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Medicerus'),
+      home: const MyHomePage(selectedPage: 0),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.selectedPage}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -70,8 +72,8 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
-
+  final String title = 'Medicerus';
+  final int selectedPage;
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -83,7 +85,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void initState() {
-    _tabController = new TabController(length: 3, vsync: this);
+    _tabController = new TabController(
+        initialIndex: widget.selectedPage, length: 3, vsync: this);
     super.initState();
   }
 
@@ -116,8 +119,13 @@ class _MyHomePageState extends State<MyHomePage>
           backgroundColor: Colors.blue.shade900,
           actions: [
             IconButton(
-              icon: Icon(Icons.more_vert),
-              onPressed: () {},
+              icon: Icon(Icons.history),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => (HistoryLogPage())),
+                );
+              },
             ),
           ],
         ),

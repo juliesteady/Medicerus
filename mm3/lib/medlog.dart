@@ -1,3 +1,7 @@
+import 'package:medicerus/otcdrug.dart';
+
+import 'prescription.dart';
+
 class MedLogFields {
   static final List<String?> values = [
     id.toString(),
@@ -42,4 +46,27 @@ class MedLog {
       required this.amounttaken,
       required this.unit,
       this.substanceName});
+
+  MedLog.withPresc(Prescription presc)
+      : id = null,
+        name = presc.name,
+        timetaken = DateTime.now().toString(),
+        prescriptionstatus = true,
+        prescid = presc.id,
+        otcid = null,
+        amounttaken =
+            presc.totalAmount, //totalAmount is 2, daySupply is 30(month)
+        unit = presc.unit,
+        substanceName = presc.substanceName;
+
+  MedLog.withOTC(OTCDrug otc)
+      : id = null,
+        name = otc.name,
+        timetaken = DateTime.now().toString(),
+        prescriptionstatus = false,
+        prescid = null,
+        otcid = otc.id,
+        amounttaken = otc.recAmount,
+        unit = otc.unit,
+        substanceName = otc.substanceName;
 }

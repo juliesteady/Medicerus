@@ -8,6 +8,7 @@ class OTCDrugFields {
     recTimeType,
     details,
     substanceName,
+    pinned.toString()
   ];
   static final int? id = 0;
   static final String name = 'name';
@@ -17,19 +18,21 @@ class OTCDrugFields {
   static final String recTimeType = ''; //hours/days/weeks, etc.
   static final String? details = '';
   static final String? substanceName = 'SubstanceName'; //multi-valued
+  static final bool pinned = false;
 }
 
 class OTCDrug {
   final int? id;
-  final String name;
-  final int recAmount;
-  final String unit; //ml, tablets?
-  final int recTime; //amount of hours/days, etc.
-  final String recTimeType; //hours/days/weeks, etc.
-  final String? details;
+  String name;
+  int recAmount;
+  String unit; //ml, tablets?
+  int recTime; //amount of hours/days, etc.
+  String recTimeType; //hours/days/weeks, etc.
+  String? details;
   final String? substanceName; //multi-valued
+  bool pinned;
 
-  const OTCDrug(
+  OTCDrug(
       {this.id,
       required this.name,
       required this.recAmount,
@@ -37,5 +40,6 @@ class OTCDrug {
       required this.recTime,
       required this.recTimeType,
       this.details,
-      this.substanceName});
+      this.substanceName,
+      required this.pinned});
 }
