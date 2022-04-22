@@ -436,10 +436,9 @@ class _DashboardPageState extends State<DashboardPage> {
       backColor = Colors.grey.shade300;
       logButton = Container();
     } else {
-      logButton = Container(
-        // SizedBox(
-        //   height: 30,
-        //   width: 30,
+      logButton = SizedBox(
+        height: 30,
+        width: 30,
         child: IconButton(
             icon: const Icon(Icons.check),
             onPressed: () {
@@ -458,32 +457,13 @@ class _DashboardPageState extends State<DashboardPage> {
       return Container(
           color: backColor,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+                constraints: BoxConstraints(maxWidth: 25),
+                child: Icon(Icons.medication)),
             Column(children: [
               Container(
-                  padding: const EdgeInsets.only(
-                      left: 4, bottom: 4, right: 4, top: 4),
-                  //margin: EdgeInsets.all(2),
-                  //constraints: BoxConstraints(maxWidth: 25),
-                  //child: Icon(Icons.medication)),
-                  child: IconButton(
-                      icon: pinIcon,
-                      onPressed: () {
-                        presc.pinned = !presc.pinned;
-                        userdbHelper.insertOrUpdatePrescription(presc);
-                        setState(() {
-                          prescriptions = userdbHelper.getPrescriptions();
-                          pinnedLoggedPrescriptions =
-                              getPinnedLoggedPrescriptions();
-                          pinnedUnloggedPrescriptions =
-                              getPinnedUnloggedPrescriptions();
-                        });
-                      })),
-            ]),
-            Column(children: [
-              Container(
-                  //width: 300,
-                  padding: const EdgeInsets.only(
-                      left: 4, bottom: 4, right: 4, top: 4),
+                  width: 300,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
                     presc.name,
                     style: const TextStyle(
@@ -493,9 +473,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     textAlign: TextAlign.left,
                   )),
               Container(
-                  //width: 300,
-                  padding: const EdgeInsets.only(
-                      left: 4, bottom: 4, right: 4, top: 4),
+                  width: 300,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
                     presc.totalAmount.toString() + ' ' + presc.unit,
                     style: TextStyle(
@@ -505,10 +484,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     textAlign: TextAlign.left,
                   )),
             ]),
-            Column(children: [
-              logButton,
-            ]),
-            /*
+            logButton,
             SizedBox(
               height: 30,
               width: 30,
@@ -527,8 +503,6 @@ class _DashboardPageState extends State<DashboardPage> {
                     });
                   }),
             ),
-            */
-            //logButton,
           ]));
     });
   }

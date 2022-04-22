@@ -83,9 +83,8 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 10, bottom: 5, right: 5, top: 15),
+              Expanded(
+                flex: 2,
                 child: Text(
                   otcDrug.name,
                   style: const TextStyle(
@@ -95,9 +94,8 @@ class _MedviewPageState extends State<MedviewPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding:
-                    EdgeInsets.only(left: 10, bottom: 5, right: 5, top: 20),
+              Expanded(
+                flex: 1,
                 child: Text(
                   "Amount Limit: ${otcDrug.recAmount.toString()} ${otcDrug.unit} Time Limit: ${otcDrug.recTime.toString()} per ${otcDrug.recTimeType}",
                   style: const TextStyle(
@@ -177,9 +175,8 @@ class _MedviewPageState extends State<MedviewPage> {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 10, bottom: 5, right: 5, top: 15),
+              Expanded(
+                flex: 2,
                 child: Text(
                   presc.name,
                   style: const TextStyle(
@@ -189,9 +186,8 @@ class _MedviewPageState extends State<MedviewPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding:
-                    EdgeInsets.only(left: 10, bottom: 5, right: 5, top: 20),
+              Expanded(
+                flex: 1,
                 child: Text(
                   "Take ${presc.totalAmount.toString()} ${presc.unit} per day",
                   style: const TextStyle(
