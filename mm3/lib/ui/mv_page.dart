@@ -251,7 +251,7 @@ class _MedviewPageState extends State<MedviewPage> {
                   if (snapshot.hasData) {
                     if (snapshot.data!.isEmpty) {
                       return Container(
-                          height: 450,
+                          height: 75,
                           child: const Text(
                             'No current prescriptions.',
                             style: TextStyle(fontSize: 20),
@@ -314,7 +314,7 @@ class _MedviewPageState extends State<MedviewPage> {
                   if (snapshot.hasData) {
                     if (snapshot.data!.isEmpty) {
                       return Container(
-                          height: 450,
+                          height: 75,
                           child: const Text(
                             'No current over the counter drugs.',
                             style: TextStyle(fontSize: 20),

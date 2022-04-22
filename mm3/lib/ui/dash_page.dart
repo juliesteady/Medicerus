@@ -412,9 +412,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   width: 325,
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
-                    (presc.totalAmount / presc.daySupply).toString() +
-                        ' ' +
-                        presc.unit,
+                    presc.totalAmount.toString() + ' ' + presc.unit,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[700],
@@ -499,9 +497,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   padding: const EdgeInsets.only(
                       left: 4, bottom: 4, right: 4, top: 4),
                   child: Text(
-                    (presc.totalAmount / presc.daySupply).toString() +
-                        ' ' +
-                        presc.unit,
+                    presc.totalAmount.toString() + ' ' + presc.unit,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[700],
